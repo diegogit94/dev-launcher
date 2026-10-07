@@ -42,6 +42,15 @@ Or straight from GitHub:
 npm install -g github:diegogit94/dev-launcher
 ```
 
+> **Don't forget `-g`.** Without it, npm installs the package into the current folder instead of making the `dev` command available everywhere.
+>
+> **On Windows:**
+> - If you get `EPERM: operation not permitted, mkdir 'C:\WINDOWS\system32\node_modules'`, you ran `npm i dev-launcher` without `-g` from a terminal opened as Administrator (which starts in `system32`). Run `npm install -g dev-launcher` instead. You don't need Administrator.
+> - If PowerShell says it can't load `dev.ps1` because running scripts is disabled, run this once and try again:
+>   ```powershell
+>   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+>   ```
+
 <img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/install.gif" alt="Installing dev-launcher and running the setup" width="760">
 
 The first-time setup asks three things:
