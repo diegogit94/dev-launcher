@@ -104,8 +104,8 @@ async function configurar(actual) {
 
   // 1. Carpeta de proyectos
   console.log('1) Carpeta donde guardas tus proyectos');
-  console.log(color.gris('   Escribe la ruta (Tab autocompleta) o deja vacio y presiona Enter para elegirla con el explorador.'));
-  if (actual.root) console.log(color.gris(`   Actual: ${actual.root}  (escribe "=" para mantenerla)`));
+  console.log(color.gris('   Escribe la ruta (Tab autocompleta) o presiona Enter para abrir el explorador.'));
+  if (actual.root) console.log(color.gris(`   Actual: ${cfgLib.rutaCorta(actual.root)}  (escribe "=" para mantenerla)`));
   let root = null;
   while (!root) {
     let resp = await preguntar('   Ruta: ', { completarCarpetas: true });
@@ -125,7 +125,7 @@ async function configurar(actual) {
     }
   }
   const n = cfgLib.listarProyectos(root).length;
-  console.log(color.verde(`   ✓ ${root} (${n} proyecto${n === 1 ? '' : 's'})\n`));
+  console.log(color.verde(`   ✓ ${cfgLib.rutaCorta(root)} (${n} proyecto${n === 1 ? '' : 's'})\n`));
 
   // 2. Agente
   const config = { root, agentesPersonalizados: actual.agentesPersonalizados || {} };
@@ -142,7 +142,7 @@ async function configurar(actual) {
     agenteId = id;
   }
   const agente = todosLosAgentes(config)[agenteId];
-  console.log(color.verde(`   ✓ ${agente.nombre}\n`));
+  console.log(color.verde(`2) Agente: ✓ ${agente.nombre}\n`));
   if (!cfgLib.existeComando(agente.bin)) {
     console.log(color.amarillo(`   Aviso: no encuentro el comando "${agente.bin}". Instalalo antes de usar dev.\n`));
   }
@@ -155,7 +155,7 @@ async function configurar(actual) {
   const iniModo = Math.max(0, modos.indexOf(actual.modo));
   let modo = await menu({ titulo: '3) Que hacer al abrir un proyecto?', items: itemsModo, inicial: iniModo, filtrable: false, ayuda: 'Flechas: mover · Enter: elegir' });
   if (!modo) modo = modos[iniModo];
-  console.log(color.verde(`   ✓ ${modo === 'preguntar' ? 'Preguntar cada vez' : MODOS[modo]}\n`));
+  console.log(color.verde(`3) Al abrir: ✓ ${modo === 'preguntar' ? 'preguntar cada vez' : MODOS[modo].toLowerCase()}\n`));
   if (actual.ultimoModo) config.ultimoModo = actual.ultimoModo;
 
   config.agente = agenteId;
@@ -189,7 +189,7 @@ async function elegirProyecto(root, busqueda) {
     return null;
   }
   return menu({
-    titulo: `Elige un proyecto  ${color.gris('(' + root + ')')}`,
+    titulo: `Elige un proyecto  ${color.gris('(' + cfgLib.rutaCorta(root) + ')')}`,
     items: proyectos.map((p) => ({ label: p, value: p })),
     filtro: busqueda || '',
   });
