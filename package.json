@@ -1,0 +1,35 @@
+{
+  "name": "dev-launcher",
+  "version": "1.1.0",
+  "description": "Abre tus proyectos con tu agente de IA (Claude Code, Codex, Gemini, Copilot, Cursor, OpenCode...) desde un menu en la terminal.",
+  "bin": {
+    "dev": "bin/dev.js",
+    "dev-launcher": "bin/dev.js"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "cli",
+    "claude-code",
+    "codex",
+    "gemini-cli",
+    "ai-agents",
+    "launcher"
+  ],
+  "author": "Diego",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diegogit94/dev-launcher.git"
+  },
+  "homepage": "https://github.com/diegogit94/dev-launcher#readme",
+  "bugs": {
+    "url": "https://github.com/diegogit94/dev-launcher/issues"
+  }
+}
