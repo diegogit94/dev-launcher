@@ -3,7 +3,7 @@
 CLI multiplataforma (Windows, macOS, Linux) que abre proyectos con un agente de IA. El usuario escribe `dev`, elige un proyecto de su carpeta de proyectos, elige cómo abrirlo (retomar una conversación anterior, continuar la última o una nueva) y el agente se lanza dentro de esa carpeta.
 
 - Autor: Diego (GitHub `diegogit94`). Repo: https://github.com/diegogit94/dev-launcher (público).
-- Paquete npm: `dev-launcher` (publicado; 1.1.0 es la última versión en npm al 2026-10-08).
+- Paquete npm: `dev-launcher` (publicado; 1.1.1 es la última versión en npm al 2026-10-08).
 - Comandos instalados: `dev` y `dev-launcher` (alias por si `dev` choca con otro programa).
 
 ## Estructura
@@ -77,7 +77,7 @@ Si cambia la interfaz, regenerar con `python3 scripts/demo/gen.py` (o solo uno: 
 
 - [x] Primer commit subido a GitHub.
 - [x] Commit con README en inglés, README.es.md, GIFs, `scripts/demo` y este archivo.
-- [x] Primera publicación en npm (manual): `dev-launcher@1.1.0`.
+- [x] Primera publicación en npm (manual): `dev-launcher@1.1.0`; luego 1.1.1 con la nota de instalación en Windows.
 - [ ] Workflow `.github/workflows/publish.yml` que publique en npm al crear un release, con **trusted publishing** (OIDC, sin token). Requiere que el paquete ya exista en npm y enlazar el repo y el workflow en la configuración del paquete en npmjs.com.
 - [ ] Opcional: interfaz en inglés y español (detectar idioma del sistema o `--lang`), y luego regenerar los GIFs en inglés.
 - [ ] Probar en Windows y macOS reales (ver "Probar").
