@@ -18,9 +18,11 @@ ${color.cian('Uso')}
   dev -n, --nueva        Conversacion nueva (sin preguntar)
   dev -c, --continuar    Continua la ultima conversacion
   dev -r, --elegir       Lista de conversaciones anteriores para elegir
-  dev -a, --agente [id]  Usa otro agente solo esta vez (sin id muestra un menu)
+  dev -a, --agente [id]  Cambia el agente de ese proyecto y lo recuerda
+                         (sin id muestra un menu)
   dev -l, --lista        Muestra tus proyectos y sale
   dev --config           Cambia la carpeta, el agente o el modo por defecto
+                         (los proyectos con agente propio lo conservan)
   dev ... -- <args>      Pasa argumentos extra al agente (ej: dev web -- --model opus)
 
 ${color.cian('Agentes incluidos')}
@@ -157,6 +159,9 @@ async function configurar(actual) {
   if (!modo) modo = modos[iniModo];
   console.log(color.verde(`3) Al abrir: ✓ ${modo === 'preguntar' ? 'preguntar cada vez' : MODOS[modo].toLowerCase()}\n`));
   if (actual.ultimoModo) config.ultimoModo = actual.ultimoModo;
+  // los proyectos que ya usan el nuevo agente por defecto dejan de necesitar uno propio
+  const propios = Object.entries(actual.ultimoAgente || {}).filter(([, id]) => id !== agenteId);
+  if (propios.length) config.ultimoAgente = Object.fromEntries(propios);
 
   config.agente = agenteId;
   config.modo = modo;
@@ -167,7 +172,24 @@ async function configurar(actual) {
   return config;
 }
 
-async function elegirProyecto(root, busqueda) {
+// Agente de un proyecto: el que se eligio para el, o el agente por defecto
+function agenteDelProyecto(config, agentes, ruta) {
+  const id = (config.ultimoAgente || {})[ruta];
+  return id && agentes[id] ? id : config.agente;
+}
+
+// Guarda el agente elegido para un proyecto. Si es el de por defecto no se guarda,
+// asi el proyecto sigue al agente por defecto si luego se cambia en --config.
+function recordarAgente(config, ruta, id) {
+  const mapa = Object.assign({}, config.ultimoAgente);
+  if (id === config.agente) delete mapa[ruta];
+  else mapa[ruta] = id;
+  if (Object.keys(mapa).length) config.ultimoAgente = mapa;
+  else delete config.ultimoAgente;
+}
+
+async function elegirProyecto(config, agentes, busqueda) {
+  const root = config.root;
   const proyectos = cfgLib.listarProyectos(root);
   if (proyectos.length === 0) {
     console.error(color.rojo(`No hay proyectos en ${root}. Usa "dev --config" para cambiar la carpeta.`));
@@ -190,16 +212,22 @@ async function elegirProyecto(root, busqueda) {
   }
   return menu({
     titulo: `Elige un proyecto  ${color.gris('(' + cfgLib.rutaCorta(root) + ')')}`,
-    items: proyectos.map((p) => ({ label: p, value: p })),
+    items: proyectos.map((p) => {
+      const id = agenteDelProyecto(config, agentes, path.join(root, p));
+      return { label: p, value: p, hint: id !== config.agente ? '· ' + agentes[id].nombre : undefined };
+    }),
     filtro: busqueda || '',
   });
 }
 
+const CAMBIAR_AGENTE = '__agente__';
+
 // Segundo menu: como abrir el proyecto. Marca por defecto lo ultimo que se uso en ese proyecto.
+// Incluye la opcion de cambiar el agente del proyecto (devuelve CAMBIAR_AGENTE).
 async function elegirModo(agente, proyecto, ultimo) {
   const modos = Object.keys(MODOS).filter((m) => agente[m]);
-  if (modos.length === 1) return modos[0];
   const items = modos.map((m) => ({ label: MODOS[m], value: m, hint: agente[m] }));
+  items.push({ label: 'Cambiar de agente…', value: CAMBIAR_AGENTE, hint: 'solo para este proyecto' });
   const inicial = Math.max(0, modos.indexOf(ultimo));
   return menu({
     titulo: `${proyecto}  ${color.gris('· ' + agente.nombre)}  -  Como lo abro?`,
@@ -208,6 +236,26 @@ async function elegirModo(agente, proyecto, ultimo) {
     filtrable: false,
     ayuda: 'Flechas: mover · Enter: abrir · Esc: volver a proyectos',
   });
+}
+
+// Menu de agentes para un proyecto. No deja elegir uno que no este instalado.
+async function elegirAgente(agentes, proyecto, actual) {
+  const items = Object.entries(agentes).map(([id, ag]) => etiquetaAgente(id, ag));
+  let inicial = Math.max(0, items.findIndex((i) => i.value === actual));
+  for (;;) {
+    const elegido = await menu({
+      titulo: `${proyecto}  -  Que agente usas en este proyecto?`,
+      items,
+      inicial,
+      filtrable: false,
+      ayuda: 'Flechas: mover · Enter: elegir · Esc: volver',
+    });
+    if (!elegido) return null;
+    const item = items.find((i) => i.value === elegido);
+    if (item.instalado) return elegido;
+    console.log(color.amarillo(`No encuentro "${agentes[elegido].bin}" (${agentes[elegido].nombre}). Instalalo o elige otro.`));
+    inicial = items.indexOf(item);
+  }
 }
 
 function citar(arg) {
@@ -256,27 +304,24 @@ async function main() {
   }
 
   const agentes = todosLosAgentes(config);
-  let agenteId = config.agente;
+  if (!agentes[config.agente]) {
+    console.error(color.rojo(`El agente "${config.agente}" no existe. Usa "dev --config".`));
+    process.exit(1);
+  }
+  let agenteForzado = null; // dev -a <id>
+  let menuAgente = false; // dev -a sin id: menu de agentes despues de elegir el proyecto
   if (opts.elegirAgente) {
     if (opts.agente && agentes[opts.agente]) {
-      agenteId = opts.agente;
+      agenteForzado = opts.agente;
     } else {
       if (opts.agente && !opts.proyecto) opts.proyecto = opts.agente; // no era un agente: era el proyecto
       else if (opts.agente) console.log(color.amarillo(`Agente desconocido: ${opts.agente}`));
-      const items = Object.entries(agentes).map(([id, ag]) => etiquetaAgente(id, ag));
-      const elegido = await menu({ titulo: 'Que agente quieres usar esta vez?', items, inicial: Math.max(0, items.findIndex((i) => i.value === agenteId)), filtrable: false });
-      if (!elegido) return;
-      agenteId = elegido;
+      if (!process.stdin.isTTY) {
+        console.error(`Indica el agente: dev -a <id>  (${Object.keys(agentes).join(', ')})`);
+        process.exit(1);
+      }
+      menuAgente = true;
     }
-  }
-  const agente = agentes[agenteId];
-  if (!agente) {
-    console.error(color.rojo(`El agente "${agenteId}" no existe. Usa "dev --config".`));
-    process.exit(1);
-  }
-  if (!cfgLib.existeComando(agente.bin)) {
-    console.error(color.rojo(`No encuentro "${agente.bin}" (${agente.nombre}). Instalalo o cambia de agente con "dev --config".`));
-    process.exit(1);
   }
 
   let pedido = opts.modo || config.modo || 'preguntar';
@@ -285,20 +330,47 @@ async function main() {
   let busqueda = opts.proyecto;
   let proyecto;
   let ruta;
-  for (;;) {
-    proyecto = await elegirProyecto(config.root, busqueda);
+  let agenteId;
+  proyectos: for (;;) {
+    proyecto = await elegirProyecto(config, agentes, busqueda);
     if (!proyecto) return;
+    busqueda = ''; // si se vuelve con Esc, se muestra el menu completo
     ruta = path.join(config.root, proyecto);
+    agenteId = agenteForzado || agenteDelProyecto(config, agentes, ruta);
+    if (menuAgente) {
+      const elegido = await elegirAgente(agentes, proyecto, agenteId);
+      if (!elegido) continue; // Esc: vuelve al menu de proyectos
+      agenteId = elegido;
+    }
+    if (agenteForzado || menuAgente) {
+      recordarAgente(config, ruta, agenteId);
+      try { cfgLib.guardarConfig(config); } catch (e) { /* no es critico */ }
+    }
     if (pedido !== 'preguntar') break;
-    const ultimo = (config.ultimoModo || {})[ruta];
-    const elegido = await elegirModo(agente, proyecto, ultimo);
-    if (elegido) {
+    for (;;) {
+      const ultimo = (config.ultimoModo || {})[ruta];
+      const elegido = await elegirModo(agentes[agenteId], proyecto, ultimo);
+      if (!elegido) continue proyectos; // Esc: vuelve al menu de proyectos
+      if (elegido === CAMBIAR_AGENTE) {
+        const otro = await elegirAgente(agentes, proyecto, agenteId);
+        if (otro) {
+          agenteId = otro;
+          recordarAgente(config, ruta, agenteId);
+          try { cfgLib.guardarConfig(config); } catch (e) { /* no es critico */ }
+        }
+        continue;
+      }
       pedido = elegido;
       config.ultimoModo = Object.assign({}, config.ultimoModo, { [ruta]: elegido });
       try { cfgLib.guardarConfig(config); } catch (e) { /* no es critico */ }
-      break;
+      break proyectos;
     }
-    busqueda = ''; // Esc: vuelve al menu de proyectos
+  }
+
+  const agente = agentes[agenteId];
+  if (!cfgLib.existeComando(agente.bin)) {
+    console.error(color.rojo(`No encuentro "${agente.bin}" (${agente.nombre}). Instalalo o cambia el agente de este proyecto con "dev ${proyecto} -a".`));
+    process.exit(1);
   }
 
   const modo = resolverModo(agente, pedido);

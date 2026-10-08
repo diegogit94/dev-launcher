@@ -22,6 +22,7 @@ Tired of `cd`-ing into a folder every time you want to talk to your coding agent
 - **Works with any agent:** Claude Code, OpenAI Codex, Gemini CLI, GitHub Copilot CLI, Cursor CLI, OpenCode, Aider, or your own.
 - **Cross-platform:** Windows (PowerShell, cmd, Windows Terminal), macOS and Linux.
 - **Remembers per project** which option you used last, so `Enter` is usually all you need.
+- **A different agent per project** if you want: Claude Code for one, Codex for another.
 - **Type to filter** long project lists, or jump straight in with `dev <part-of-name>`.
 - **Zero dependencies:** a single small Node.js package.
 
@@ -87,7 +88,7 @@ Arrow keys move, Enter opens, Esc goes back. Skip the menus with flags when you 
 | `dev -r`, `--resume` | Pick an earlier conversation |
 | `dev -c`, `--continue` | Continue the last conversation |
 | `dev -n`, `--new` | Start a new conversation |
-| `dev -a [agent]` | Use another agent just this once (no name shows a menu) |
+| `dev <project> -a [agent]` | Change that project's agent and remember it (no name shows a menu) |
 | `dev -l`, `--list` | List your projects |
 | `dev --config` | Change folder, agent or default behavior |
 | `dev web -- --model opus` | Pass extra arguments to the agent |
@@ -109,6 +110,15 @@ If `dev` clashes with another command on your system, `dev-launcher` does exactl
 | Aider | `aider` | `aider` | `aider --restore-chat-history` | — |
 
 When an agent can't do an option at startup, that option is hidden from the menu.
+
+### A different agent per project
+
+Every project uses the agent you chose in `dev --config`, unless you give it its own:
+
+- From the menu: open the project and choose **"Cambiar de agente…"** in the second menu.
+- From the command line: `dev api -a codex` (or `dev api -a` to pick from a menu).
+
+`dev` remembers that choice, and from then on `dev api` opens with Codex. Projects with their own agent show its name in the project menu. Choosing the default agent again puts the project back on the default.
 
 ### Adding your own agent
 

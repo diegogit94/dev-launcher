@@ -22,6 +22,7 @@
 - **Funciona con cualquier agente:** Claude Code, OpenAI Codex, Gemini CLI, GitHub Copilot CLI, Cursor CLI, OpenCode, Aider o el tuyo.
 - **Multiplataforma:** Windows (PowerShell, cmd, Windows Terminal), macOS y Linux.
 - **Recuerda por proyecto** la última opción que usaste, así que casi siempre basta con Enter.
+- **Un agente distinto por proyecto** si quieres: Claude Code en uno, Codex en otro.
 - **Escribe para filtrar** listas largas de proyectos, o entra directo con `dev <parte-del-nombre>`.
 - **Sin dependencias:** un solo paquete pequeño de Node.js.
 
@@ -85,7 +86,7 @@ Flechas para moverte, Enter para abrir, Esc para volver. Si ya sabes lo que quie
 | `dev -r`, `--elegir` | Elegir una conversación anterior |
 | `dev -c`, `--continuar` | Continuar la última conversación |
 | `dev -n`, `--nueva` | Conversación nueva |
-| `dev -a [agente]` | Usa otro agente solo esta vez (sin nombre muestra un menú) |
+| `dev <proyecto> -a [agente]` | Cambia el agente de ese proyecto y lo recuerda (sin nombre muestra un menú) |
 | `dev -l`, `--lista` | Lista tus proyectos |
 | `dev --config` | Cambia la carpeta, el agente o el comportamiento por defecto |
 | `dev web -- --model opus` | Pasa argumentos extra al agente |
@@ -107,6 +108,15 @@ Si el nombre `dev` choca con otro comando en tu sistema, `dev-launcher` hace exa
 | Aider | `aider` | `aider` | `aider --restore-chat-history` | — |
 
 Si un agente no permite una opción al iniciar, esa opción no aparece en el menú.
+
+### Un agente distinto por proyecto
+
+Cada proyecto usa el agente que elegiste en `dev --config`, salvo que le asignes uno propio:
+
+- Desde el menú: abre el proyecto y elige **"Cambiar de agente…"** en el segundo menú.
+- Desde la línea de comandos: `dev api -a codex` (o `dev api -a` para elegirlo en un menú).
+
+`dev` recuerda esa elección y desde entonces `dev api` abre con Codex. Los proyectos con agente propio muestran su nombre en el menú de proyectos. Si vuelves a elegir el agente por defecto, el proyecto vuelve a seguir al de por defecto.
 
 ### Agregar tu propio agente
 

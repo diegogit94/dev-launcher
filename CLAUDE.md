@@ -3,7 +3,7 @@
 CLI multiplataforma (Windows, macOS, Linux) que abre proyectos con un agente de IA. El usuario escribe `dev`, elige un proyecto de su carpeta de proyectos, elige cómo abrirlo (retomar una conversación anterior, continuar la última o una nueva) y el agente se lanza dentro de esa carpeta.
 
 - Autor: Diego (GitHub `diegogit94`). Repo: https://github.com/diegogit94/dev-launcher (público).
-- Paquete npm: `dev-launcher` (nombre libre al 2026-10-07, **todavía no publicado**).
+- Paquete npm: `dev-launcher` (publicado; 1.1.0 es la última versión en npm al 2026-10-08).
 - Comandos instalados: `dev` y `dev-launcher` (alias por si `dev` choca con otro programa).
 
 ## Estructura
@@ -31,11 +31,13 @@ README.md         en inglés (principal) · README.es.md en español
   ```json
   { "root": "...", "agente": "claude", "modo": "preguntar",
     "agentesPersonalizados": { "id": { "nombre", "bin", "nueva", "continuar", "elegir" } },
-    "ultimoModo": { "<ruta completa del proyecto>": "continuar" } }
+    "ultimoModo": { "<ruta completa del proyecto>": "continuar" },
+    "ultimoAgente": { "<ruta completa del proyecto>": "codex" } }
   ```
 - `modo`: `preguntar` (por defecto y recomendado: muestra el segundo menú), o fijo `elegir` | `continuar` | `nueva`.
 - `ultimoModo` guarda por proyecto la última opción elegida en el segundo menú y la deja preseleccionada.
-- Flags `-n/--nueva/--new`, `-c/--continuar/--continue`, `-r/--elegir/--resume` saltan el segundo menú. `-a [id]` cambia de agente solo esa vez. `-l` lista proyectos. Todo lo que va después de `--` se pasa al agente.
+- `ultimoAgente` guarda el agente propio de cada proyecto (se elige con `Cambiar de agente…` en el segundo menú o con `-a`). Solo se guarda si es distinto de `agente`; si se vuelve a elegir el de por defecto, se borra la entrada y el proyecto sigue al de por defecto. `--config` borra las entradas que quedan iguales al nuevo agente por defecto. Por eso el agente se resuelve **después** de elegir el proyecto.
+- Flags `-n/--nueva/--new`, `-c/--continuar/--continue`, `-r/--elegir/--resume` saltan el segundo menú. `-a [id]` cambia el agente del proyecto y lo recuerda (sin id: menú de agentes después de elegir el proyecto; si el id no es un agente se toma como proyecto). `-l` lista proyectos. Todo lo que va después de `--` se pasa al agente.
 - `dev <texto>`: coincidencia exacta, si no la única que contenga el texto; si hay varias abre el menú ya filtrado.
 - El agente se ejecuta con `spawn(comando, { shell: true, stdio: 'inherit', cwd })`; `dev` ignora SIGINT mientras el agente corre y sale con su código.
 - Si un agente no soporta un modo al iniciar (valor `null`), ese modo no aparece en el menú y `resolverModo` usa el siguiente.
@@ -71,14 +73,15 @@ Si cambia la interfaz, regenerar con `python3 scripts/demo/gen.py` (o solo uno: 
 2. Actualizaciones: `npm version patch|minor` → `git push --follow-tags` → `npm publish`.
 3. Hacer push a GitHub **no** publica en npm. Instalar con `npm i -g github:diegogit94/dev-launcher` sí toma lo último de `main`.
 
-## Estado y pendientes (al 2026-10-07)
+## Estado y pendientes (al 2026-10-08)
 
 - [x] Primer commit subido a GitHub.
-- [ ] Commit con README en inglés, README.es.md, GIFs, `scripts/demo` y este archivo (pendiente de push).
-- [ ] Primera publicación en npm (manual).
+- [x] Commit con README en inglés, README.es.md, GIFs, `scripts/demo` y este archivo.
+- [x] Primera publicación en npm (manual): `dev-launcher@1.1.0`.
 - [ ] Workflow `.github/workflows/publish.yml` que publique en npm al crear un release, con **trusted publishing** (OIDC, sin token). Requiere que el paquete ya exista en npm y enlazar el repo y el workflow en la configuración del paquete en npmjs.com.
 - [ ] Opcional: interfaz en inglés y español (detectar idioma del sistema o `--lang`), y luego regenerar los GIFs en inglés.
 - [ ] Probar en Windows y macOS reales (ver "Probar").
+- [ ] Regenerar `open-menu.png` y `flags.gif`: no muestran la opción `Cambiar de agente…` ni el agente propio por proyecto (agregado el 2026-10-08).
 
 ## Historia (para no repetir caminos)
 
