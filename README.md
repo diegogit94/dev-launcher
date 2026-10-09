@@ -23,6 +23,8 @@ Tired of `cd`-ing into a folder every time you want to talk to your coding agent
 - **Cross-platform:** Windows (PowerShell, cmd, Windows Terminal), macOS and Linux.
 - **Remembers per project** which option you used last, so `Enter` is usually all you need.
 - **A different agent per project** if you want: Claude Code for one, Codex for another.
+- **Several project folders**, all shown in one list.
+- **Settings right from the menu:** folders, default agent, menu color, sort order and custom agents.
 - **Type to filter** long project lists, or jump straight in with `dev <part-of-name>`.
 - **Zero dependencies:** a single small Node.js package.
 
@@ -60,6 +62,8 @@ The first-time setup asks three things:
 2. **Your agent.** Installed agents are detected and marked.
 3. **What to do when opening a project:** ask every time (recommended) or always use the same option.
 
+You can link more project folders later from the settings.
+
 <img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/setup-agent.png" alt="Choosing an agent during setup" width="620">
 
 ## Usage
@@ -90,7 +94,7 @@ Arrow keys move, Enter opens, Esc goes back. Skip the menus with flags when you 
 | `dev -n`, `--new` | Start a new conversation |
 | `dev <project> -a [agent]` | Change that project's agent and remember it (no name shows a menu) |
 | `dev -l`, `--list` | List your projects |
-| `dev --config` | Change folder, agent or default behavior |
+| `dev --config` | Open the settings (also the last option in the project menu) |
 | `dev web -- --model opus` | Pass extra arguments to the agent |
 
 <img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/flags.gif" alt="Opening projects directly with flags and another agent" width="760">
@@ -113,7 +117,7 @@ When an agent can't do an option at startup, that option is hidden from the menu
 
 ### A different agent per project
 
-Every project uses the agent you chose in `dev --config`, unless you give it its own:
+Every project uses the default agent from the settings, unless you give it its own:
 
 - From the menu: open the project and choose **"Cambiar de agente…"** in the second menu.
 - From the command line: `dev api -a codex` (or `dev api -a` to pick from a menu).
@@ -122,11 +126,11 @@ Every project uses the agent you chose in `dev --config`, unless you give it its
 
 ### Adding your own agent
 
-Choose **"Otro: agregar un agente personalizado"** in `dev --config` and type the commands for each case. They're saved in your config file, where you can also edit them:
+In the settings, choose **Agentes personalizados → Agregar agente…** and type the commands for each case. From there you can also edit or delete them later. They're saved in your config file:
 
 ```json
 {
-  "root": "/Users/you/Dev",
+  "carpetas": ["/Users/you/Dev", "/Users/you/Work"],
   "agente": "my-agent",
   "modo": "preguntar",
   "agentesPersonalizados": {
@@ -143,7 +147,20 @@ Choose **"Otro: agregar un agente personalizado"** in `dev --config` and type th
 
 ## Configuration
 
-Settings live in `~/.dev-launcher.json` (on Windows: `C:\Users\<you>\.dev-launcher.json`). Run `dev --config` any time to change them.
+Open the settings with the last option of the project menu, **"≡ Configuracion…"** (press ↑ from the first project, or type `config`), or with `dev --config`. Every change is saved right away:
+
+| Setting | What it does |
+|---|---|
+| Carpetas de proyectos | Link more project folders or unlink one (unlinking never deletes anything from disk). With several folders, the menu shows which one each project comes from. |
+| Agente por defecto | The agent for every project that doesn't have its own. |
+| Al abrir un proyecto | Ask every time (recommended) or always use the same option. |
+| Color del menu | Cyan, green, blue, magenta, yellow or plain (no color). You see each one as you move over it. |
+| Orden de proyectos | Alphabetical, or the ones you opened last first. |
+| Agentes personalizados | Add, edit or delete your own agents. |
+
+<img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/settings.gif" alt="Settings menu: project folders and a live preview of the menu colors" width="760">
+
+Settings live in `~/.dev-launcher.json` (on Windows: `C:\Users\<you>\.dev-launcher.json`).
 
 ## Uninstall
 

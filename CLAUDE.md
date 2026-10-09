@@ -9,12 +9,13 @@ CLI multiplataforma (Windows, macOS, Linux) que abre proyectos con un agente de 
 ## Estructura
 
 ```
-bin/dev.js        CLI: parseo de argumentos, asistente de configuración (--config), flujo principal, lanzamiento del agente
+bin/dev.js        CLI: parseo de argumentos, menú de proyectos, segundo menú (modo / cambiar agente), lanzamiento del agente
+lib/ajustes.js    asistente de la primera vez y menú de configuración (carpetas, agente, modo, color, orden, agentes personalizados)
 lib/agents.js     PRESETS de agentes (comandos por modo), MODOS, resolverModo() (baja al siguiente modo disponible)
-lib/config.js     leer/guardar ~/.dev-launcher.json, expandir rutas, existeComando() (PATH + PATHEXT), listarProyectos(), rutaCorta() (~)
-lib/ui.js         menu() con flechas y filtro por texto, preguntar() con autocompletado de carpetas, selector de carpeta nativo
+lib/config.js     leer/guardar ~/.dev-launcher.json (migra "root" a "carpetas"), expandir rutas, existeComando() (PATH + PATHEXT), listarTodos(), nombreCarpeta(), rutaCorta() (~)
+lib/ui.js         menu() con flechas, filtro, hints alineados y alMover (vista previa), TEMAS de color, preguntar() con autocompletado de carpetas, selector de carpeta nativo
 docs/assets/      GIFs y capturas del README (generados con scripts/demo)
-scripts/demo/     rec.py (graba bash en un pty como asciicast) y gen.py (escenarios + render con agg)
+scripts/demo/     gen.js (escenarios, grabación como asciicast y render con agg) y tty.js (terminal simulada para cada `dev`)
 README.md         en inglés (principal) · README.es.md en español
 ```
 
@@ -29,14 +30,20 @@ README.md         en inglés (principal) · README.es.md en español
 
 - Config en `~/.dev-launcher.json` (en Windows `C:\Users\<user>\.dev-launcher.json`). Se puede cambiar con la variable de entorno `DEV_LAUNCHER_CONFIG` (útil para probar sin tocar la config real):
   ```json
-  { "root": "...", "agente": "claude", "modo": "preguntar",
+  { "carpetas": ["...", "..."], "agente": "claude", "modo": "preguntar",
+    "color": "cian", "orden": "alfabetico",
     "agentesPersonalizados": { "id": { "nombre", "bin", "nueva", "continuar", "elegir" } },
     "ultimoModo": { "<ruta completa del proyecto>": "continuar" },
-    "ultimoAgente": { "<ruta completa del proyecto>": "codex" } }
+    "ultimoAgente": { "<ruta completa del proyecto>": "codex" },
+    "ultimoUso": { "<ruta completa del proyecto>": 1791557244751 } }
   ```
+- `carpetas`: carpetas de proyectos vinculadas. Hasta la 1.2.0 era una sola en `root`; `leerConfig()` la convierte sola. Todos los proyectos se muestran en una sola lista; con más de una carpeta, cada proyecto lleva de hint el nombre de su carpeta (`nombreCarpeta`: la ruta corta si dos carpetas se llaman igual). Una carpeta que ya no existe se avisa una vez y se ignora; no se puede desvincular la última.
+- `color`: tema del menú (`TEMAS` en `lib/ui.js`: cian, verde, azul, magenta, amarillo, sobrio). Usar `color.acento` para títulos y no `color.cian`, así respeta el tema.
+- `orden`: `alfabetico` o `recientes` (usa `ultimoUso`, que se guarda en cada lanzamiento).
+- La última opción del menú de proyectos es `≡ Configuracion…` (el filtro la encuentra con `claves` desde 3 letras: "con", "aju", "opc"). `dev --config` abre el mismo menú; el asistente paso a paso (`configuracionInicial`) solo corre si no hay config. Cada cambio se guarda al instante.
 - `modo`: `preguntar` (por defecto y recomendado: muestra el segundo menú), o fijo `elegir` | `continuar` | `nueva`.
 - `ultimoModo` guarda por proyecto la última opción elegida en el segundo menú y la deja preseleccionada.
-- `ultimoAgente` guarda el agente propio de cada proyecto (se elige con `Cambiar de agente…` en el segundo menú o con `-a`). Solo se guarda si es distinto de `agente`; si se vuelve a elegir el de por defecto, se borra la entrada y el proyecto sigue al de por defecto. `--config` borra las entradas que quedan iguales al nuevo agente por defecto. Por eso el agente se resuelve **después** de elegir el proyecto.
+- `ultimoAgente` guarda el agente propio de cada proyecto (se elige con `Cambiar de agente…` en el segundo menú o con `-a`). Solo se guarda si es distinto de `agente`; si se vuelve a elegir el de por defecto, se borra la entrada y el proyecto sigue al de por defecto. Cambiar el agente por defecto (en la configuración) borra las entradas que quedan iguales al nuevo. Por eso el agente se resuelve **después** de elegir el proyecto.
 - Flags `-n/--nueva/--new`, `-c/--continuar/--continue`, `-r/--elegir/--resume` saltan el segundo menú. `-a [id]` cambia el agente del proyecto y lo recuerda (sin id: menú de agentes después de elegir el proyecto; si el id no es un agente se toma como proyecto). `-l` lista proyectos. Todo lo que va después de `--` se pasa al agente.
 - `dev <texto>`: coincidencia exacta, si no la única que contenga el texto; si hay varias abre el menú ya filtrado.
 - El agente se ejecuta con `spawn(comando, { shell: true, stdio: 'inherit', cwd })`; `dev` ignora SIGINT mientras el agente corre y sale con su código.
@@ -65,7 +72,7 @@ Copilot y Aider no quedaron 100% confirmados; si alguno falla, corregir en `lib/
 
 ## Regenerar GIFs y capturas
 
-Si cambia la interfaz, regenerar con `python3 scripts/demo/gen.py` (o solo uno: `install`, `usage` o `flags`). Necesita Linux o WSL como root, Pillow, y `agg` más la fuente JetBrains Mono en `scripts/demo/tools/` (ver el docstring de `gen.py`). Copia el resultado a `docs/assets/`. El README enlaza las imágenes con URLs absolutas de `raw.githubusercontent.com/.../main/docs/assets/` para que se vean también en la página de npm.
+Si cambia la interfaz, regenerar con `node scripts/demo/gen.js` (o solo algunos: `install`, `usage`, `flags`, `settings`). Funciona en Windows, macOS y Linux: cada `dev` corre de verdad en un proceso aparte con `tty.js` precargado, que simula la terminal (stdin/stdout TTY, teclas por IPC) y los agentes; no hace falta pty ni WSL. Necesita `agg` y la fuente JetBrains Mono en `scripts/demo/tools/` (`--descargar` los baja; la carpeta está en `.gitignore`) e ImageMagick (`magick`) para las capturas. Copia el resultado a `docs/assets/`. Revisar las capturas y algunos cuadros de los GIF: así se encontraron el ⚙ dibujado como emoji y el texto ilegible en los temas azul y magenta. El README enlaza las imágenes con URLs absolutas de `raw.githubusercontent.com/.../main/docs/assets/` para que se vean también en la página de npm.
 
 ## Publicar
 
@@ -81,7 +88,7 @@ Si cambia la interfaz, regenerar con `python3 scripts/demo/gen.py` (o solo uno: 
 - [ ] Workflow `.github/workflows/publish.yml` que publique en npm al crear un release, con **trusted publishing** (OIDC, sin token). Requiere que el paquete ya exista en npm y enlazar el repo y el workflow en la configuración del paquete en npmjs.com.
 - [ ] Opcional: interfaz en inglés y español (detectar idioma del sistema o `--lang`), y luego regenerar los GIFs en inglés.
 - [ ] Probar en Windows y macOS reales (ver "Probar").
-- [ ] Regenerar `open-menu.png` y `flags.gif`: no muestran la opción `Cambiar de agente…` ni el agente propio por proyecto (agregado el 2026-10-08).
+- [x] GIFs y capturas regenerados (2026-10-09) con el generador en Node, incluido `settings.gif` del menú de configuración.
 
 ## Historia (para no repetir caminos)
 

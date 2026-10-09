@@ -23,6 +23,8 @@
 - **Multiplataforma:** Windows (PowerShell, cmd, Windows Terminal), macOS y Linux.
 - **Recuerda por proyecto** la última opción que usaste, así que casi siempre basta con Enter.
 - **Un agente distinto por proyecto** si quieres: Claude Code en uno, Codex en otro.
+- **Varias carpetas de proyectos**, todas en una sola lista.
+- **Configuración desde el mismo menú:** carpetas, agente por defecto, color del menú, orden y agentes personalizados.
 - **Escribe para filtrar** listas largas de proyectos, o entra directo con `dev <parte-del-nombre>`.
 - **Sin dependencias:** un solo paquete pequeño de Node.js.
 
@@ -58,6 +60,8 @@ La primera vez te pregunta tres cosas:
 2. **Tu agente.** Detecta y marca los que tienes instalados.
 3. **Qué hacer al abrir un proyecto:** preguntar cada vez (recomendado) o usar siempre la misma opción.
 
+Después puedes vincular más carpetas de proyectos desde la configuración.
+
 <img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/setup-agent.png" alt="Elección del agente en la configuración" width="620">
 
 ## Uso
@@ -88,7 +92,7 @@ Flechas para moverte, Enter para abrir, Esc para volver. Si ya sabes lo que quie
 | `dev -n`, `--nueva` | Conversación nueva |
 | `dev <proyecto> -a [agente]` | Cambia el agente de ese proyecto y lo recuerda (sin nombre muestra un menú) |
 | `dev -l`, `--lista` | Lista tus proyectos |
-| `dev --config` | Cambia la carpeta, el agente o el comportamiento por defecto |
+| `dev --config` | Abre la configuración (también es la última opción del menú de proyectos) |
 | `dev web -- --model opus` | Pasa argumentos extra al agente |
 
 <img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/flags.gif" alt="Abrir proyectos directo con flags y con otro agente" width="760">
@@ -111,7 +115,7 @@ Si un agente no permite una opción al iniciar, esa opción no aparece en el men
 
 ### Un agente distinto por proyecto
 
-Cada proyecto usa el agente que elegiste en `dev --config`, salvo que le asignes uno propio:
+Cada proyecto usa el agente por defecto de la configuración, salvo que le asignes uno propio:
 
 - Desde el menú: abre el proyecto y elige **"Cambiar de agente…"** en el segundo menú.
 - Desde la línea de comandos: `dev api -a codex` (o `dev api -a` para elegirlo en un menú).
@@ -120,11 +124,11 @@ Cada proyecto usa el agente que elegiste en `dev --config`, salvo que le asignes
 
 ### Agregar tu propio agente
 
-En `dev --config` elige **"Otro: agregar un agente personalizado"** y escribe los comandos de cada caso. Se guardan en tu archivo de configuración, donde también puedes editarlos:
+En la configuración elige **Agentes personalizados → Agregar agente…** y escribe los comandos de cada caso. Desde ahí también puedes editarlos o borrarlos después. Se guardan en tu archivo de configuración:
 
 ```json
 {
-  "root": "C:\\Users\\tu-usuario\\Dev",
+  "carpetas": ["C:\\Users\\tu-usuario\\Dev", "C:\\Users\\tu-usuario\\Trabajo"],
   "agente": "mi-agente",
   "modo": "preguntar",
   "agentesPersonalizados": {
@@ -141,7 +145,20 @@ En `dev --config` elige **"Otro: agregar un agente personalizado"** y escribe lo
 
 ## Configuración
 
-Se guarda en `~/.dev-launcher.json` (en Windows: `C:\Users\<tu usuario>\.dev-launcher.json`). Corre `dev --config` cuando quieras cambiarla.
+Ábrela con la última opción del menú de proyectos, **"≡ Configuracion…"** (presiona ↑ desde el primer proyecto o escribe `config`), o con `dev --config`. Cada cambio se guarda al instante:
+
+| Opción | Qué hace |
+|---|---|
+| Carpetas de proyectos | Vincula más carpetas de proyectos o desvincula una (desvincular nunca borra nada del disco). Con varias carpetas, el menú muestra de cuál viene cada proyecto. |
+| Agente por defecto | El agente de todos los proyectos que no tienen uno propio. |
+| Al abrir un proyecto | Preguntar cada vez (recomendado) o usar siempre la misma opción. |
+| Color del menu | Cian, verde, azul, magenta, amarillo o sobrio (sin color). Cada uno se ve al pasar por encima. |
+| Orden de proyectos | Alfabético, o los últimos que abriste primero. |
+| Agentes personalizados | Agrega, edita o borra tus propios agentes. |
+
+<img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/settings.gif" alt="Menú de configuración: carpetas de proyectos y vista previa de los colores del menú" width="760">
+
+Se guarda en `~/.dev-launcher.json` (en Windows: `C:\Users\<tu usuario>\.dev-launcher.json`).
 
 ## Desinstalar
 
