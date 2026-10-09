@@ -3,7 +3,7 @@
 CLI multiplataforma (Windows, macOS, Linux) que abre proyectos con un agente de IA. El usuario escribe `dev`, elige un proyecto de su carpeta de proyectos, elige cómo abrirlo (retomar una conversación anterior, continuar la última o una nueva) y el agente se lanza dentro de esa carpeta.
 
 - Autor: Diego (GitHub `diegogit94`). Repo: https://github.com/diegogit94/dev-launcher (público).
-- Paquete npm: `dev-launcher` (publicado; 1.4.0 es la última versión en npm al 2026-10-09).
+- Paquete npm: `dev-launcher` (publicado; 1.5.0 es la última versión publicada al 2026-10-09).
 - Comandos instalados: `dev` y `dev-launcher` (alias por si `dev` choca con otro programa).
 
 ## Estructura
@@ -90,10 +90,10 @@ Si cambia la interfaz, regenerar con `node scripts/demo/gen.js` (o solo algunos:
 
 - [x] Primer commit subido a GitHub.
 - [x] Commit con README en inglés, README.es.md, GIFs, `scripts/demo` y este archivo.
-- [x] Primera publicación en npm (manual): `dev-launcher@1.1.0`; luego 1.1.1 (nota de instalación en Windows), 1.2.0 (agente propio por proyecto), 1.3.0 (varias carpetas y menú de configuración) y 1.4.0 (actualizar desde el menú).
+- [x] Primera publicación en npm (manual): `dev-launcher@1.1.0`; luego 1.1.1 (nota de instalación en Windows), 1.2.0 (agente propio por proyecto), 1.3.0 (varias carpetas y menú de configuración), 1.4.0 (actualizar desde el menú) y 1.5.0 (español e inglés, donaciones).
 - [ ] Workflow `.github/workflows/publish.yml` que publique en npm al crear un release, con **trusted publishing** (OIDC, sin token). Requiere que el paquete ya exista en npm y enlazar el repo y el workflow en la configuración del paquete en npmjs.com.
 - [x] Interfaz en inglés y español (2026-10-09), con GIFs en los dos idiomas.
-- [x] Donaciones (GitHub Sponsors + Ko-fi), idiomas y GIFs bilingües subidos a GitHub (2026-10-09). Publicar en npm como 1.5.0.
+- [x] Donaciones (GitHub Sponsors + Ko-fi), idiomas y GIFs bilingües subidos a GitHub (2026-10-09). Publicado en npm como 1.5.0.
 - [ ] Aprobación del perfil de GitHub Sponsors (enviado a revisión el 2026-10-09). Hasta entonces `github.com/sponsors/diegogit94` redirige al perfil; al aprobarse funciona sin tocar nada. Verificar con `gh api graphql -f query='{ user(login:"diegogit94"){ hasSponsorsListing } }'`.
 - [ ] Probar en Windows y macOS reales (ver "Probar").
 - [x] GIFs y capturas regenerados (2026-10-09) con el generador en Node, incluido `settings.gif` del menú de configuración.
