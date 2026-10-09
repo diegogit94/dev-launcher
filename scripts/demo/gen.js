@@ -14,8 +14,12 @@ Requisitos:
   - ImageMagick (`magick`) para las capturas .png
   Con --descargar baja agg y la fuente a tools/ (carpeta ignorada por git).
 
-Uso:  node scripts/demo/gen.js                 # todos
+Cada escenario se graba en ingles (para README.md: install.gif...) y en espanol (para README.es.md:
+install-es.gif...). Los textos que espera se toman de lib/i18n.js, asi no se desincronizan.
+
+Uso:  node scripts/demo/gen.js                 # todos, en los dos idiomas
       node scripts/demo/gen.js usage settings  # solo algunos (install | usage | flags | settings)
+      node scripts/demo/gen.js --lang es       # solo un idioma
       node scripts/demo/gen.js --descargar     # baja agg y la fuente antes de generar
 */
 
@@ -23,6 +27,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { spawn, spawnSync, execFileSync, execSync } = require('child_process');
+const { texto } = require('../../lib/i18n');
 
 const S = __dirname;
 const REPO = path.resolve(S, '..', '..');
@@ -39,12 +44,15 @@ const CONFIG = path.join(HOME, '.dev-launcher.json');
 const PROMPT = '\x1b[1;36m~\x1b[0m \x1b[1;35m❯\x1b[0m ';
 const TECLAS = { ENTER: '\r', DOWN: '\x1b[B', UP: '\x1b[A', TAB: '\t', ESC: '\x1b', BS: '\x7f' };
 
-// Nombre final en docs/assets de cada archivo generado
+// Nombre final en docs/assets de cada archivo generado (en espanol llevan "-es": install-es.gif)
 const DESTINOS = {
   'install.gif': 'install.gif', 'usage.gif': 'usage.gif', 'flags.gif': 'flags.gif', 'settings.gif': 'settings.gif',
   'install-agentes.png': 'setup-agent.png', 'usage-lista.png': 'project-menu.png',
   'usage-menu_modo.png': 'open-menu.png',
 };
+const SUFIJO = { en: '', es: '-es' };
+// lo que imprimen los agentes simulados de tty.js
+const SESION = { en: 'session starts', es: 'empieza la sesion' }; // ver tty.js
 
 // Pasos: sh (escribe un comando en el prompt y lo ejecuta), type (teclea dentro de dev), key,
 // wait (espera un texto en la salida), sleep, mark (momento para una captura)
@@ -65,46 +73,50 @@ const configDemo = (extra) => Object.assign({
   ultimoAgente: { [path.join(WORK, 'crm-dashboard')]: 'codex' },
 }, extra);
 
-const ESCENARIOS = {
-  install: {
-    cols: 92, rows: 27, config: null,
-    steps: [
-      Z(0.8), sh('npm install -g dev-launcher'), W('added'), Z(1.2),
-      sh('dev --config'), W('Ruta:'), Z(0.8),
-      T(WIN ? '~\\De' : '~/De', 0.12), K('TAB', 0.7), Z(0.4), K('ENTER'), W('Que agente'), Z(1.0),
-      K('DOWN', 0.6), K('UP', 0.6), M('agentes'), Z(0.6), K('ENTER'), W('Que hacer'), Z(1.4),
-      K('ENTER'), W('Listo'), Z(2.5),
-    ],
-  },
-  usage: {
-    cols: 92, rows: 19, config: configDemo(),
-    steps: [
-      Z(0.8), sh('dev'), W('Elige un proyecto'), Z(1.0), M('lista'),
-      K('DOWN', 0.5), K('DOWN', 0.5), Z(0.3), T('sho', 0.25), Z(1.0),
-      K('ENTER'), W('Como lo abro'), Z(0.8), M('menu_modo'), Z(0.4), K('DOWN', 0.7), K('ENTER'), W('session starts'), Z(1.6),
-      sh('dev shop'), W('Como lo abro'), Z(1.8), K('ENTER'), W('session starts'), Z(2.2),
-    ],
-  },
-  flags: {
-    cols: 92, rows: 19, config: configDemo(),
-    steps: [
-      Z(0.8), sh('dev land -n'), W('session starts'), Z(1.2),
-      sh('dev api -a codex -c'), W('session starts'), Z(1.2),
-      sh('dev -l'), W('shop-backend'), Z(2.5),
-    ],
-  },
-  settings: {
-    cols: 92, rows: 19, config: configDemo(),
-    steps: [
-      Z(0.8), sh('dev'), W('Elige un proyecto'), Z(1.0),
-      K('UP', 0.8), K('ENTER'), W('Agentes personalizados'), Z(1.6),
-      K('ENTER'), W('Vincular otra'), Z(1.8), K('ESC', 0.9), W('Agentes personalizados'), Z(0.4),
-      ...n('DOWN', 3, 0.4), K('ENTER'), W('se ve al moverte'), Z(0.8),
-      ...n('DOWN', 3, 0.9), Z(0.4), K('ENTER'), W('Color: Magenta'), Z(1.5),
-      K('ESC', 0.9), W('Elige un proyecto'), Z(1.8), K('ESC', 0.9), Z(1.0),
-    ],
-  },
-};
+function escenarios(lang) {
+  const L = (clave, vars) => texto(lang, clave, vars);
+  const comoLoAbro = L('modo.titulo', { proyecto: '', agente: '' }).split(' - ').pop().trim();
+  return {
+    install: {
+      cols: 92, rows: 27, config: null,
+      steps: [
+        Z(0.8), sh('npm install -g dev-launcher'), W('added'), Z(1.2),
+        sh('dev --config'), W(L('carpeta.ruta').trim()), Z(0.8),
+        T(WIN ? '~\\De' : '~/De', 0.12), K('TAB', 0.7), Z(0.4), K('ENTER'), W(L('inicial.paso2')), Z(1.0),
+        K('DOWN', 0.6), K('UP', 0.6), M('agentes'), Z(0.6), K('ENTER'), W(L('inicial.paso3')), Z(1.4),
+        K('ENTER'), W(L('inicial.listo')), Z(2.5),
+      ],
+    },
+    usage: {
+      cols: 92, rows: 19, config: configDemo(),
+      steps: [
+        Z(0.8), sh('dev'), W(L('proyectos.titulo')), Z(1.0), M('lista'),
+        K('DOWN', 0.5), K('DOWN', 0.5), Z(0.3), T('sho', 0.25), Z(1.0),
+        K('ENTER'), W(comoLoAbro), Z(0.8), M('menu_modo'), Z(0.4), K('DOWN', 0.7), K('ENTER'), W(SESION[lang]), Z(1.6),
+        sh('dev shop'), W(comoLoAbro), Z(1.8), K('ENTER'), W(SESION[lang]), Z(2.2),
+      ],
+    },
+    flags: {
+      cols: 92, rows: 19, config: configDemo(),
+      steps: [
+        Z(0.8), sh('dev land -n'), W(SESION[lang]), Z(1.2),
+        sh('dev api -a codex -c'), W(SESION[lang]), Z(1.2),
+        sh('dev -l'), W('shop-backend'), Z(2.5),
+      ],
+    },
+    settings: {
+      cols: 92, rows: 19, config: configDemo(),
+      steps: [
+        Z(0.8), sh('dev'), W(L('proyectos.titulo')), Z(1.0),
+        K('UP', 0.8), K('ENTER'), W(L('config.propios')), Z(1.6),
+        K('ENTER'), W(L('carpetas.vincular')), Z(1.8), K('ESC', 0.9), W(L('config.propios')), Z(0.4),
+        ...n('DOWN', 3, 0.4), K('ENTER'), W(L('color.titulo')), Z(0.8),
+        ...n('DOWN', 3, 0.9), Z(0.4), K('ENTER'), W(L('color.ok', { nombre: L('tema.magenta') })), Z(1.5),
+        K('ESC', 0.9), W(L('proyectos.titulo')), Z(1.8), K('ESC', 0.9), Z(1.0),
+      ],
+    },
+  };
+}
 
 // ---- Entorno de la demo: carpeta de usuario con proyectos y agentes simulados ----
 
@@ -126,6 +138,7 @@ function preparar() {
 
 function entorno(esc) {
   return Object.assign({}, process.env, {
+    DEV_LAUNCHER_LANG: esc.lang,
     HOME, USERPROFILE: HOME, DEV_LAUNCHER_CONFIG: CONFIG,
     PATH: STUBS, // solo los agentes simulados: que no aparezcan los agentes instalados en esta maquina
     DEMO_COLS: String(esc.cols), DEMO_ROWS: String(esc.rows),
@@ -138,6 +151,7 @@ function entorno(esc) {
 
 async function grabar(nombre, esc) {
   fs.rmSync(CONFIG, { force: true });
+  fs.rmSync(path.join(BASE, 'npm'), { recursive: true, force: true }); // cada instalacion empieza de cero
   if (esc.config) fs.writeFileSync(CONFIG, JSON.stringify(esc.config, null, 2));
 
   const eventos = [];
@@ -258,25 +272,32 @@ function descargar() {
 async function main() {
   const args = process.argv.slice(2);
   if (args.includes('--descargar')) descargar();
-  const solo = args.filter((a) => !a.startsWith('--'));
+  const iLang = args.indexOf('--lang');
+  const idiomas = iLang >= 0 ? [args[iLang + 1]] : Object.keys(SUFIJO);
+  if (!idiomas.every((l) => SUFIJO[l] !== undefined)) throw new Error('Idioma no soportado (usa es o en).');
+  const solo = args.filter((a, i) => !a.startsWith('--') && i !== iLang + 1);
   if (!fs.existsSync(AGG)) throw new Error(`No encuentro agg en ${AGG}. Usa --descargar.`);
   if (spawnSync('magick', ['-version']).status !== 0) throw new Error('No encuentro ImageMagick (magick).');
 
   fs.mkdirSync(OUT, { recursive: true });
   preparar();
-  for (const [nombre, esc] of Object.entries(ESCENARIOS)) {
-    if (solo.length && !solo.includes(nombre)) continue;
-    const { cast, marcas } = await grabar(nombre, esc);
-    agg(cast, path.join(OUT, `${nombre}.gif`));
-    for (const [m, t] of Object.entries(marcas)) captura(cast, t, path.join(OUT, `${nombre}-${m}.png`));
-  }
-
   fs.mkdirSync(ASSETS, { recursive: true });
-  for (const [origen, destino] of Object.entries(DESTINOS)) {
-    const p = path.join(OUT, origen);
-    if (fs.existsSync(p)) {
-      fs.copyFileSync(p, path.join(ASSETS, destino));
-      console.log(`docs/assets/${destino}  (${Math.round(fs.statSync(p).size / 1024)} KB)`);
+  for (const lang of idiomas) {
+    const suf = SUFIJO[lang];
+    for (const [nombre, esc] of Object.entries(escenarios(lang))) {
+      if (solo.length && !solo.includes(nombre)) continue;
+      const archivo = nombre + suf;
+      const { cast, marcas } = await grabar(archivo, Object.assign({ lang }, esc));
+      agg(cast, path.join(OUT, `${archivo}.gif`));
+      for (const [m, t] of Object.entries(marcas)) captura(cast, t, path.join(OUT, `${archivo}-${m}.png`));
+      // copia a docs/assets lo que salio de este escenario
+      for (const [origen, destino] of Object.entries(DESTINOS)) {
+        if (!origen.startsWith(nombre + '.') && !origen.startsWith(nombre + '-')) continue;
+        const desde = path.join(OUT, origen.replace(nombre, archivo));
+        const hacia = destino.replace(/(\.\w+)$/, `${suf}$1`);
+        fs.copyFileSync(desde, path.join(ASSETS, hacia));
+        console.log(`docs/assets/${hacia}  (${Math.round(fs.statSync(desde).size / 1024)} KB)`);
+      }
     }
   }
 }

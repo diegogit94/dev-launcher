@@ -21,6 +21,7 @@ Tired of `cd`-ing into a folder every time you want to talk to your coding agent
 
 - **Works with any agent:** Claude Code, OpenAI Codex, Gemini CLI, GitHub Copilot CLI, Cursor CLI, OpenCode, Aider, or your own.
 - **Cross-platform:** Windows (PowerShell, cmd, Windows Terminal), macOS and Linux.
+- **English and Spanish:** follows your system language, or pick one in the settings.
 - **Remembers per project** which option you used last, so `Enter` is usually all you need.
 - **A different agent per project** if you want: Claude Code for one, Codex for another.
 - **Several project folders**, all shown in one list.
@@ -28,7 +29,7 @@ Tired of `cd`-ing into a folder every time you want to talk to your coding agent
 - **Type to filter** long project lists, or jump straight in with `dev <part-of-name>`.
 - **Zero dependencies:** a single small Node.js package.
 
-> **Note:** the interface is currently in Spanish (the screenshots below show it as-is). The commands and flags work the same for everyone.
+> **Note:** the interface speaks English and Spanish. It follows your system language; change it in **≡ Settings… → Language**, or just for one run with `--lang es|en`.
 
 ## Install
 
@@ -74,7 +75,7 @@ The same command on Windows, macOS and Linux:
 npm install -g dev-launcher@latest
 ```
 
-Check your version with `dev --version`. You can also update from the menu: **≡ Configuracion… → Actualizar dev-launcher**. `dev` checks npm once a day in the background (it never slows down the menu) and shows **"hay una version nueva"** next to *Configuracion* when there is one. To turn that check off, set the environment variable `DEV_LAUNCHER_NO_UPDATE_CHECK=1`.
+Check your version with `dev --version`. You can also update from the menu: **≡ Settings… → Update dev-launcher**. `dev` checks npm once a day in the background (it never slows down the menu) and shows **"new version available"** next to *Settings* when there is one. To turn that check off, set the environment variable `DEV_LAUNCHER_NO_UPDATE_CHECK=1`.
 
 - **Windows:** use a normal terminal, not one opened as Administrator (see the `EPERM` note above).
 - **macOS / Linux:** if you get `EACCES: permission denied`, Node.js was installed for the whole system. The clean fix is to install Node with a version manager like [nvm](https://github.com/nvm-sh/nvm) or to [change npm's global folder](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally); `sudo npm install -g dev-launcher@latest` also works.
@@ -108,6 +109,7 @@ Arrow keys move, Enter opens, Esc goes back. Skip the menus with flags when you 
 | `dev -n`, `--new` | Start a new conversation |
 | `dev <project> -a [agent]` | Change that project's agent and remember it (no name shows a menu) |
 | `dev -l`, `--list` | List your projects |
+| `dev --lang es\|en` | Interface language for this run only |
 | `dev --config` | Open the settings (also the last option in the project menu) |
 | `dev web -- --model opus` | Pass extra arguments to the agent |
 
@@ -133,14 +135,14 @@ When an agent can't do an option at startup, that option is hidden from the menu
 
 Every project uses the default agent from the settings, unless you give it its own:
 
-- From the menu: open the project and choose **"Cambiar de agente…"** in the second menu.
+- From the menu: open the project and choose **"Change agent…"** in the second menu.
 - From the command line: `dev api -a codex` (or `dev api -a` to pick from a menu).
 
 `dev` remembers that choice, and from then on `dev api` opens with Codex. Projects with their own agent show its name in the project menu. Choosing the default agent again puts the project back on the default.
 
 ### Adding your own agent
 
-In the settings, choose **Agentes personalizados → Agregar agente…** and type the commands for each case. From there you can also edit or delete them later. They're saved in your config file:
+In the settings, choose **Custom agents → Add agent…** and type the commands for each case. From there you can also edit or delete them later. They're saved in your config file:
 
 ```json
 {
@@ -161,17 +163,19 @@ In the settings, choose **Agentes personalizados → Agregar agente…** and typ
 
 ## Configuration
 
-Open the settings with the last option of the project menu, **"≡ Configuracion…"** (press ↑ from the first project, or type `config`), or with `dev --config`. Every change is saved right away:
+Open the settings with the last option of the project menu, **"≡ Settings…"** (press ↑ from the first project, or type `settings`), or with `dev --config`. Every change is saved right away:
 
 | Setting | What it does |
 |---|---|
-| Carpetas de proyectos | Link more project folders or unlink one (unlinking never deletes anything from disk). With several folders, the menu shows which one each project comes from. |
-| Agente por defecto | The agent for every project that doesn't have its own. |
-| Al abrir un proyecto | Ask every time (recommended) or always use the same option. |
-| Color del menu | Cyan, green, blue, magenta, yellow or plain (no color). You see each one as you move over it. |
-| Orden de proyectos | Alphabetical, or the ones you opened last first. |
-| Agentes personalizados | Add, edit or delete your own agents. |
-| Actualizar dev-launcher | Shows your version, checks npm and installs the new one if there is one. |
+| Project folders | Link more project folders or unlink one (unlinking never deletes anything from disk). With several folders, the menu shows which one each project comes from. |
+| Default agent | The agent for every project that doesn't have its own. |
+| When opening a project | Ask every time (recommended) or always use the same option. |
+| Menu color | Cyan, green, blue, magenta, yellow or plain (no color). You see each one as you move over it. |
+| Project order | Alphabetical, or the ones you opened last first. |
+| Language | Automatic (your system's), English or Spanish. It changes right away. |
+| Custom agents | Add, edit or delete your own agents. |
+| Update dev-launcher | Shows your version, checks npm and installs the new one if there is one. |
+| Buy me a Warhammer mini | Opens GitHub Sponsors or Ko-fi in your browser, to leave a tip (it goes to the painting table). |
 
 <img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/settings.gif" alt="Settings menu: project folders and a live preview of the menu colors" width="760">
 
@@ -182,6 +186,15 @@ Settings live in `~/.dev-launcher.json` (on Windows: `C:\Users\<you>\.dev-launch
 ```bash
 npm uninstall -g dev-launcher
 ```
+
+## Support the project
+
+dev-launcher is free and always will be. If it saves you time and you'd like to leave a tip, thank you! You can do it in two ways:
+
+- **[GitHub Sponsors](https://github.com/sponsors/diegogit94)**: one-time or monthly, with your GitHub account.
+- **[Ko-fi](https://ko-fi.com/mr_hyde)**: no account needed, by card or PayPal.
+
+You can also open them from the menu: **≡ Settings… → Buy me a Warhammer mini**. Starring the repo or reporting a bug helps too.
 
 ## License
 

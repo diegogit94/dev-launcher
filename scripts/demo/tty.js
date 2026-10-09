@@ -36,7 +36,12 @@ childProcess.spawn = (comando, opciones) => {
   const hijo = new EventEmitter();
   const bin = comando.split(' ')[0];
   setTimeout(() => {
-    process.stdout.write(`\x1b[2m  (${NOMBRES[bin] || bin} session starts here, in ${path.basename(opciones.cwd)})\x1b[0m\n`);
+    const nombre = NOMBRES[bin] || bin;
+    const carpeta = path.basename(opciones.cwd);
+    const linea = process.env.DEV_LAUNCHER_LANG === 'es'
+      ? `(aqui empieza la sesion de ${nombre}, en ${carpeta})`
+      : `(${nombre} session starts here, in ${carpeta})`;
+    process.stdout.write(`\x1b[2m  ${linea}\x1b[0m\n`);
     setTimeout(() => hijo.emit('exit', 0, null), 300);
   }, 400);
   return hijo;

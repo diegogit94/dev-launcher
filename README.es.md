@@ -11,7 +11,7 @@
 
 [English](README.md) · Español
 
-<img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/usage.gif" alt="Demo de dev-launcher: elegir un proyecto y cómo abrirlo" width="760">
+<img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/usage-es.gif" alt="Demo de dev-launcher: elegir un proyecto y cómo abrirlo" width="760">
 
 </div>
 
@@ -21,6 +21,7 @@
 
 - **Funciona con cualquier agente:** Claude Code, OpenAI Codex, Gemini CLI, GitHub Copilot CLI, Cursor CLI, OpenCode, Aider o el tuyo.
 - **Multiplataforma:** Windows (PowerShell, cmd, Windows Terminal), macOS y Linux.
+- **En español e inglés:** usa el idioma de tu sistema, o elige uno en la configuración.
 - **Recuerda por proyecto** la última opción que usaste, así que casi siempre basta con Enter.
 - **Un agente distinto por proyecto** si quieres: Claude Code en uno, Codex en otro.
 - **Varias carpetas de proyectos**, todas en una sola lista.
@@ -52,7 +53,7 @@ npm install -g github:diegogit94/dev-launcher
 >   Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 >   ```
 
-<img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/install.gif" alt="Instalación de dev-launcher y configuración inicial" width="760">
+<img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/install-es.gif" alt="Instalación de dev-launcher y configuración inicial" width="760">
 
 La primera vez te pregunta tres cosas:
 
@@ -62,7 +63,7 @@ La primera vez te pregunta tres cosas:
 
 Después puedes vincular más carpetas de proyectos desde la configuración.
 
-<img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/setup-agent.png" alt="Elección del agente en la configuración" width="620">
+<img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/setup-agent-es.png" alt="Elección del agente en la configuración" width="620">
 
 ## Actualizar
 
@@ -86,8 +87,8 @@ dev
 
 <table>
   <tr>
-    <td><img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/project-menu.png" alt="Menú de proyectos con filtro"></td>
-    <td><img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/open-menu.png" alt="Menú para retomar, continuar o abrir una conversación nueva"></td>
+    <td><img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/project-menu-es.png" alt="Menú de proyectos con filtro"></td>
+    <td><img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/open-menu-es.png" alt="Menú para retomar, continuar o abrir una conversación nueva"></td>
   </tr>
   <tr>
     <td align="center"><sub>1. Elige un proyecto (escribe para filtrar)</sub></td>
@@ -106,10 +107,11 @@ Flechas para moverte, Enter para abrir, Esc para volver. Si ya sabes lo que quie
 | `dev -n`, `--nueva` | Conversación nueva |
 | `dev <proyecto> -a [agente]` | Cambia el agente de ese proyecto y lo recuerda (sin nombre muestra un menú) |
 | `dev -l`, `--lista` | Lista tus proyectos |
+| `dev --lang es\|en` | Idioma de la interfaz solo esa vez |
 | `dev --config` | Abre la configuración (también es la última opción del menú de proyectos) |
 | `dev web -- --model opus` | Pasa argumentos extra al agente |
 
-<img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/flags.gif" alt="Abrir proyectos directo con flags y con otro agente" width="760">
+<img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/flags-es.gif" alt="Abrir proyectos directo con flags y con otro agente" width="760">
 
 Si el nombre `dev` choca con otro comando en tu sistema, `dev-launcher` hace exactamente lo mismo.
 
@@ -168,10 +170,12 @@ En la configuración elige **Agentes personalizados → Agregar agente…** y es
 | Al abrir un proyecto | Preguntar cada vez (recomendado) o usar siempre la misma opción. |
 | Color del menu | Cian, verde, azul, magenta, amarillo o sobrio (sin color). Cada uno se ve al pasar por encima. |
 | Orden de proyectos | Alfabético, o los últimos que abriste primero. |
+| Idioma | Automático (el de tu sistema), español o inglés. Cambia al instante. |
 | Agentes personalizados | Agrega, edita o borra tus propios agentes. |
 | Actualizar dev-launcher | Muestra tu versión, consulta npm e instala la nueva si la hay. |
+| Invitame una miniatura de Warhammer | Abre GitHub Sponsors o Ko-fi en el navegador, para dejar una propina (va para la mesa de pintura). |
 
-<img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/settings.gif" alt="Menú de configuración: carpetas de proyectos y vista previa de los colores del menú" width="760">
+<img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/settings-es.gif" alt="Menú de configuración: carpetas de proyectos y vista previa de los colores del menú" width="760">
 
 Se guarda en `~/.dev-launcher.json` (en Windows: `C:\Users\<tu usuario>\.dev-launcher.json`).
 
@@ -180,6 +184,15 @@ Se guarda en `~/.dev-launcher.json` (en Windows: `C:\Users\<tu usuario>\.dev-lau
 ```bash
 npm uninstall -g dev-launcher
 ```
+
+## Apoya el proyecto
+
+dev-launcher es gratis y lo seguirá siendo. Si te ahorra tiempo y quieres dejar una propina, ¡gracias! Puedes hacerlo de dos formas:
+
+- **[GitHub Sponsors](https://github.com/sponsors/diegogit94)**: una sola vez o cada mes, con tu cuenta de GitHub.
+- **[Ko-fi](https://ko-fi.com/mr_hyde)**: sin crear cuenta, con tarjeta o PayPal.
+
+También puedes abrirlas desde el menú: **≡ Configuracion… → Invitame una miniatura de Warhammer**. Darle una estrella al repo o reportar un error también ayuda.
 
 ## Licencia
 

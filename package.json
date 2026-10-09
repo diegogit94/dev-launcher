@@ -31,5 +31,15 @@
   "homepage": "https://github.com/diegogit94/dev-launcher#readme",
   "bugs": {
     "url": "https://github.com/diegogit94/dev-launcher/issues"
-  }
+  },
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/diegogit94"
+    },
+    {
+      "type": "ko-fi",
+      "url": "https://ko-fi.com/mr_hyde"
+    }
+  ]
 }

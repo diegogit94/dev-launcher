@@ -3,7 +3,7 @@
 CLI multiplataforma (Windows, macOS, Linux) que abre proyectos con un agente de IA. El usuario escribe `dev`, elige un proyecto de su carpeta de proyectos, elige cómo abrirlo (retomar una conversación anterior, continuar la última o una nueva) y el agente se lanza dentro de esa carpeta.
 
 - Autor: Diego (GitHub `diegogit94`). Repo: https://github.com/diegogit94/dev-launcher (público).
-- Paquete npm: `dev-launcher` (publicado; 1.3.0 es la última versión en npm al 2026-10-09).
+- Paquete npm: `dev-launcher` (publicado; 1.4.0 es la última versión en npm al 2026-10-09).
 - Comandos instalados: `dev` y `dev-launcher` (alias por si `dev` choca con otro programa).
 
 ## Estructura
@@ -12,7 +12,8 @@ CLI multiplataforma (Windows, macOS, Linux) que abre proyectos con un agente de 
 bin/dev.js        CLI: parseo de argumentos, menú de proyectos, segundo menú (modo / cambiar agente), lanzamiento del agente
 lib/ajustes.js    asistente de la primera vez y menú de configuración (carpetas, agente, modo, color, orden, agentes personalizados)
 lib/actualizar.js consultar la última versión en npm (https, sin dependencias), revisión diaria en segundo plano, instalar con npm
-lib/agents.js     PRESETS de agentes (comandos por modo), MODOS, resolverModo() (baja al siguiente modo disponible)
+lib/agents.js     PRESETS de agentes (comandos por modo), MODOS (claves de i18n), resolverModo() (baja al siguiente modo disponible)
+lib/i18n.js       TODOS los textos de la interfaz en español (es) e inglés (en), t(), detección del idioma
 lib/config.js     leer/guardar ~/.dev-launcher.json (migra "root" a "carpetas"), expandir rutas, existeComando() (PATH + PATHEXT), listarTodos(), nombreCarpeta(), rutaCorta() (~)
 lib/ui.js         menu() con flechas, filtro, hints alineados y alMover (vista previa), TEMAS de color, preguntar() con autocompletado de carpetas, selector de carpeta nativo
 docs/assets/      GIFs y capturas del README (generados con scripts/demo)
@@ -23,7 +24,7 @@ README.md         en inglés (principal) · README.es.md en español
 ## Convenciones
 
 - **Cero dependencias**, CommonJS, Node >= 18. No agregar paquetes de npm salvo que sea imprescindible.
-- Código y mensajes en **español**. Los textos de la interfaz van **sin tildes** a propósito (evita problemas de codificación en consolas viejas); se permiten símbolos como `✓ › · ↑ ↓ …`.
+- Código, comentarios y nombres en **español**. La interfaz está en español e inglés: **ningún texto visible va directo en el código**, todo pasa por `t('clave')` de `lib/i18n.js`, y cada clave nueva se agrega en `es` y en `en`. Los textos en español van **sin tildes ni ¡¿** a propósito (evita problemas de codificación en consolas viejas); se permiten símbolos como `✓ › · ↑ ↓ … ≡`. Nada de emojis: se ven de doble ancho o como otro símbolo (pasó con ⚙).
 - Finales de línea LF (lo fuerza `.gitattributes`). El shebang de `bin/dev.js` debe quedar en LF o falla en macOS/Linux.
 - `package.json` → `files` publica solo `bin`, `lib` y los README; `docs/` y `scripts/` no van al paquete.
 
@@ -32,7 +33,7 @@ README.md         en inglés (principal) · README.es.md en español
 - Config en `~/.dev-launcher.json` (en Windows `C:\Users\<user>\.dev-launcher.json`). Se puede cambiar con la variable de entorno `DEV_LAUNCHER_CONFIG` (útil para probar sin tocar la config real):
   ```json
   { "carpetas": ["...", "..."], "agente": "claude", "modo": "preguntar",
-    "color": "cian", "orden": "alfabetico",
+    "color": "cian", "orden": "alfabetico", "idioma": "en",
     "agentesPersonalizados": { "id": { "nombre", "bin", "nueva", "continuar", "elegir" } },
     "ultimoModo": { "<ruta completa del proyecto>": "continuar" },
     "ultimoAgente": { "<ruta completa del proyecto>": "codex" },
@@ -44,6 +45,7 @@ README.md         en inglés (principal) · README.es.md en español
 - `orden`: `alfabetico` o `recientes` (usa `ultimoUso`, que se guarda en cada lanzamiento).
 - La última opción del menú de proyectos es `≡ Configuracion…` (el filtro la encuentra con `claves` desde 3 letras: "con", "aju", "opc"). `dev --config` abre el mismo menú; el asistente paso a paso (`configuracionInicial`) solo corre si no hay config. Cada cambio se guarda al instante.
 - `actualizacion`: resultado de la última consulta a npm. `revisarEnSegundoPlano` consulta como máximo una vez al día, sin bloquear (socket con `unref`): el aviso "hay una version nueva" (hint de `≡ Configuracion…` y de la opción `Actualizar dev-launcher`) aparece en la siguiente ejecución. Se desactiva con `DEV_LAUNCHER_NO_UPDATE_CHECK=1` o `NO_UPDATE_NOTIFIER`, y no corre desde una copia del repo (sin `node_modules` en la ruta: ahí la opción dice que se use `git pull`). Al actualizar desde el menú, `dev` corre `npm install -g dev-launcher@latest` y sale, porque el código cargado ya es el viejo. Para probarlo sin tocar la instalación real: instalar el `.tgz` en una carpeta con `--prefix`, bajarle la versión en su `package.json` y correrlo con `npm_config_prefix` apuntando a esa carpeta.
+- `idioma`: `es` o `en`; si no está, automático. Prioridad: `--lang es|en` (solo esa vez) > `idioma` de la config > variable `DEV_LAUNCHER_LANG` > idioma del sistema (`es*` → español, si no inglés; en Windows se usa `Intl` y no `LANG`, porque Git Bash lo pone). Se cambia en Configuración → Idioma y se aplica al instante.
 - `modo`: `preguntar` (por defecto y recomendado: muestra el segundo menú), o fijo `elegir` | `continuar` | `nueva`.
 - `ultimoModo` guarda por proyecto la última opción elegida en el segundo menú y la deja preseleccionada.
 - `ultimoAgente` guarda el agente propio de cada proyecto (se elige con `Cambiar de agente…` en el segundo menú o con `-a`). Solo se guarda si es distinto de `agente`; si se vuelve a elegir el de por defecto, se borra la entrada y el proyecto sigue al de por defecto. Cambiar el agente por defecto (en la configuración) borra las entradas que quedan iguales al nuevo. Por eso el agente se resuelve **después** de elegir el proyecto.
@@ -51,6 +53,7 @@ README.md         en inglés (principal) · README.es.md en español
 - `dev <texto>`: coincidencia exacta, si no la única que contenga el texto; si hay varias abre el menú ya filtrado.
 - El agente se ejecuta con `spawn(comando, { shell: true, stdio: 'inherit', cwd })`; `dev` ignora SIGINT mientras el agente corre y sale con su código.
 - Si un agente no soporta un modo al iniciar (valor `null`), ese modo no aparece en el menú y `resolverModo` usa el siguiente.
+- Donaciones: GitHub Sponsors (`github.com/sponsors/diegogit94`, Colombia está soportada, sin comisión; W-8BEN enviado el 2026-10-09) y Ko-fi (`ko-fi.com/mr_hyde`, cobra con PayPal: Ko-fi exige una cuenta completa de Stripe y en Colombia no se puede; la de GitHub Sponsors es Express). Los enlaces viven en `funding` de `package.json` (lista; los muestran `npm fund`, `dev --help` y la opción de la configuración "Buy me a Warhammer mini" / "Invitame una miniatura de Warhammer" (`config.apoyar`), que deja elegir y abre con `abrirEnNavegador` de `lib/ui.js`; nombres y hints en `DONACIONES` de `lib/ajustes.js`) y en `.github/FUNDING.yml` (botón "Sponsor" del repo). Regla: nunca mostrar avisos de donación que aparezcan solos.
 
 ## Agentes incluidos (verificados en la documentación oficial, oct-2026)
 
@@ -75,7 +78,7 @@ Copilot y Aider no quedaron 100% confirmados; si alguno falla, corregir en `lib/
 
 ## Regenerar GIFs y capturas
 
-Si cambia la interfaz, regenerar con `node scripts/demo/gen.js` (o solo algunos: `install`, `usage`, `flags`, `settings`). Funciona en Windows, macOS y Linux: cada `dev` corre de verdad en un proceso aparte con `tty.js` precargado, que simula la terminal (stdin/stdout TTY, teclas por IPC) y los agentes; no hace falta pty ni WSL. Necesita `agg` y la fuente JetBrains Mono en `scripts/demo/tools/` (`--descargar` los baja; la carpeta está en `.gitignore`) e ImageMagick (`magick`) para las capturas. Copia el resultado a `docs/assets/`. Revisar las capturas y algunos cuadros de los GIF: así se encontraron el ⚙ dibujado como emoji y el texto ilegible en los temas azul y magenta. El README enlaza las imágenes con URLs absolutas de `raw.githubusercontent.com/.../main/docs/assets/` para que se vean también en la página de npm.
+Si cambia la interfaz, regenerar con `node scripts/demo/gen.js` (o solo algunos: `install`, `usage`, `flags`, `settings`; o un idioma: `--lang es`). Cada escenario se graba en inglés (`install.gif`… para README.md) y en español (`install-es.gif`… para README.es.md); los textos que espera salen de `lib/i18n.js`. Funciona en Windows, macOS y Linux: cada `dev` corre de verdad en un proceso aparte con `tty.js` precargado, que simula la terminal (stdin/stdout TTY, teclas por IPC) y los agentes; no hace falta pty ni WSL. Necesita `agg` y la fuente JetBrains Mono en `scripts/demo/tools/` (`--descargar` los baja; la carpeta está en `.gitignore`) e ImageMagick (`magick`) para las capturas. Copia el resultado a `docs/assets/`. Revisar las capturas y algunos cuadros de los GIF: así se encontraron el ⚙ dibujado como emoji y el texto ilegible en los temas azul y magenta. El README enlaza las imágenes con URLs absolutas de `raw.githubusercontent.com/.../main/docs/assets/` para que se vean también en la página de npm.
 
 ## Publicar
 
@@ -87,9 +90,11 @@ Si cambia la interfaz, regenerar con `node scripts/demo/gen.js` (o solo algunos:
 
 - [x] Primer commit subido a GitHub.
 - [x] Commit con README en inglés, README.es.md, GIFs, `scripts/demo` y este archivo.
-- [x] Primera publicación en npm (manual): `dev-launcher@1.1.0`; luego 1.1.1 (nota de instalación en Windows), 1.2.0 (agente propio por proyecto) y 1.3.0 (varias carpetas y menú de configuración).
+- [x] Primera publicación en npm (manual): `dev-launcher@1.1.0`; luego 1.1.1 (nota de instalación en Windows), 1.2.0 (agente propio por proyecto), 1.3.0 (varias carpetas y menú de configuración) y 1.4.0 (actualizar desde el menú).
 - [ ] Workflow `.github/workflows/publish.yml` que publique en npm al crear un release, con **trusted publishing** (OIDC, sin token). Requiere que el paquete ya exista en npm y enlazar el repo y el workflow en la configuración del paquete en npmjs.com.
-- [ ] Opcional: interfaz en inglés y español (detectar idioma del sistema o `--lang`), y luego regenerar los GIFs en inglés.
+- [x] Interfaz en inglés y español (2026-10-09), con GIFs en los dos idiomas.
+- [x] Donaciones (GitHub Sponsors + Ko-fi), idiomas y GIFs bilingües subidos a GitHub (2026-10-09). Publicar en npm como 1.5.0.
+- [ ] Aprobación del perfil de GitHub Sponsors (enviado a revisión el 2026-10-09). Hasta entonces `github.com/sponsors/diegogit94` redirige al perfil; al aprobarse funciona sin tocar nada. Verificar con `gh api graphql -f query='{ user(login:"diegogit94"){ hasSponsorsListing } }'`.
 - [ ] Probar en Windows y macOS reales (ver "Probar").
 - [x] GIFs y capturas regenerados (2026-10-09) con el generador en Node, incluido `settings.gif` del menú de configuración.
 
