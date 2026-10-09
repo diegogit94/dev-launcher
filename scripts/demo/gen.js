@@ -275,7 +275,7 @@ async function main() {
   const iLang = args.indexOf('--lang');
   const idiomas = iLang >= 0 ? [args[iLang + 1]] : Object.keys(SUFIJO);
   if (!idiomas.every((l) => SUFIJO[l] !== undefined)) throw new Error('Idioma no soportado (usa es o en).');
-  const solo = args.filter((a, i) => !a.startsWith('--') && i !== iLang + 1);
+  const solo = args.filter((a, i) => !a.startsWith('--') && (iLang < 0 || i !== iLang + 1));
   if (!fs.existsSync(AGG)) throw new Error(`No encuentro agg en ${AGG}. Usa --descargar.`);
   if (spawnSync('magick', ['-version']).status !== 0) throw new Error('No encuentro ImageMagick (magick).');
 
