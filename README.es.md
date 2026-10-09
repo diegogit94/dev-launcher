@@ -64,6 +64,20 @@ Después puedes vincular más carpetas de proyectos desde la configuración.
 
 <img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/setup-agent.png" alt="Elección del agente en la configuración" width="620">
 
+## Actualizar
+
+El mismo comando en Windows, macOS y Linux:
+
+```bash
+npm install -g dev-launcher@latest
+```
+
+Revisa tu versión con `dev --version`. También puedes actualizar desde el menú: **≡ Configuracion… → Actualizar dev-launcher**. `dev` revisa npm una vez al día en segundo plano (nunca hace esperar al menú) y, si hay una versión nueva, lo indica al lado de *Configuracion* con **"hay una version nueva"**. Para desactivar esa revisión, define la variable de entorno `DEV_LAUNCHER_NO_UPDATE_CHECK=1`.
+
+- **Windows:** usa una terminal normal, no una abierta como Administrador (mira la nota del `EPERM` más arriba).
+- **macOS / Linux:** si te sale `EACCES: permission denied`, Node.js está instalado para todo el sistema. Lo más limpio es instalar Node con un gestor de versiones como [nvm](https://github.com/nvm-sh/nvm) o [cambiar la carpeta global de npm](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally); `sudo npm install -g dev-launcher@latest` también funciona.
+- **¿Lo instalaste desde GitHub?** Se actualiza igual con `npm install -g github:diegogit94/dev-launcher`.
+
 ## Uso
 
 ```bash
@@ -155,6 +169,7 @@ En la configuración elige **Agentes personalizados → Agregar agente…** y es
 | Color del menu | Cian, verde, azul, magenta, amarillo o sobrio (sin color). Cada uno se ve al pasar por encima. |
 | Orden de proyectos | Alfabético, o los últimos que abriste primero. |
 | Agentes personalizados | Agrega, edita o borra tus propios agentes. |
+| Actualizar dev-launcher | Muestra tu versión, consulta npm e instala la nueva si la hay. |
 
 <img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/settings.gif" alt="Menú de configuración: carpetas de proyectos y vista previa de los colores del menú" width="760">
 

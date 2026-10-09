@@ -66,6 +66,20 @@ You can link more project folders later from the settings.
 
 <img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/setup-agent.png" alt="Choosing an agent during setup" width="620">
 
+## Update
+
+The same command on Windows, macOS and Linux:
+
+```bash
+npm install -g dev-launcher@latest
+```
+
+Check your version with `dev --version`. You can also update from the menu: **≡ Configuracion… → Actualizar dev-launcher**. `dev` checks npm once a day in the background (it never slows down the menu) and shows **"hay una version nueva"** next to *Configuracion* when there is one. To turn that check off, set the environment variable `DEV_LAUNCHER_NO_UPDATE_CHECK=1`.
+
+- **Windows:** use a normal terminal, not one opened as Administrator (see the `EPERM` note above).
+- **macOS / Linux:** if you get `EACCES: permission denied`, Node.js was installed for the whole system. The clean fix is to install Node with a version manager like [nvm](https://github.com/nvm-sh/nvm) or to [change npm's global folder](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally); `sudo npm install -g dev-launcher@latest` also works.
+- **Installed from GitHub?** Update the same way with `npm install -g github:diegogit94/dev-launcher`.
+
 ## Usage
 
 ```bash
@@ -157,6 +171,7 @@ Open the settings with the last option of the project menu, **"≡ Configuracion
 | Color del menu | Cyan, green, blue, magenta, yellow or plain (no color). You see each one as you move over it. |
 | Orden de proyectos | Alphabetical, or the ones you opened last first. |
 | Agentes personalizados | Add, edit or delete your own agents. |
+| Actualizar dev-launcher | Shows your version, checks npm and installs the new one if there is one. |
 
 <img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/settings.gif" alt="Settings menu: project folders and a live preview of the menu colors" width="760">
 

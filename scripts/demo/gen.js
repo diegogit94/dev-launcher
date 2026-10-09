@@ -130,6 +130,7 @@ function entorno(esc) {
     PATH: STUBS, // solo los agentes simulados: que no aparezcan los agentes instalados en esta maquina
     DEMO_COLS: String(esc.cols), DEMO_ROWS: String(esc.rows),
     NO_COLOR: '', FORCE_COLOR: '',
+    DEV_LAUNCHER_NO_UPDATE_CHECK: '1', // que las demos no consulten npm ni muestren avisos de version
   });
 }
 

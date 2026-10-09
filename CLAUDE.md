@@ -3,7 +3,7 @@
 CLI multiplataforma (Windows, macOS, Linux) que abre proyectos con un agente de IA. El usuario escribe `dev`, elige un proyecto de su carpeta de proyectos, elige cómo abrirlo (retomar una conversación anterior, continuar la última o una nueva) y el agente se lanza dentro de esa carpeta.
 
 - Autor: Diego (GitHub `diegogit94`). Repo: https://github.com/diegogit94/dev-launcher (público).
-- Paquete npm: `dev-launcher` (publicado; 1.2.0 es la última versión en npm al 2026-10-08).
+- Paquete npm: `dev-launcher` (publicado; 1.3.0 es la última versión en npm al 2026-10-09).
 - Comandos instalados: `dev` y `dev-launcher` (alias por si `dev` choca con otro programa).
 
 ## Estructura
@@ -11,6 +11,7 @@ CLI multiplataforma (Windows, macOS, Linux) que abre proyectos con un agente de 
 ```
 bin/dev.js        CLI: parseo de argumentos, menú de proyectos, segundo menú (modo / cambiar agente), lanzamiento del agente
 lib/ajustes.js    asistente de la primera vez y menú de configuración (carpetas, agente, modo, color, orden, agentes personalizados)
+lib/actualizar.js consultar la última versión en npm (https, sin dependencias), revisión diaria en segundo plano, instalar con npm
 lib/agents.js     PRESETS de agentes (comandos por modo), MODOS, resolverModo() (baja al siguiente modo disponible)
 lib/config.js     leer/guardar ~/.dev-launcher.json (migra "root" a "carpetas"), expandir rutas, existeComando() (PATH + PATHEXT), listarTodos(), nombreCarpeta(), rutaCorta() (~)
 lib/ui.js         menu() con flechas, filtro, hints alineados y alMover (vista previa), TEMAS de color, preguntar() con autocompletado de carpetas, selector de carpeta nativo
@@ -35,12 +36,14 @@ README.md         en inglés (principal) · README.es.md en español
     "agentesPersonalizados": { "id": { "nombre", "bin", "nueva", "continuar", "elegir" } },
     "ultimoModo": { "<ruta completa del proyecto>": "continuar" },
     "ultimoAgente": { "<ruta completa del proyecto>": "codex" },
-    "ultimoUso": { "<ruta completa del proyecto>": 1791557244751 } }
+    "ultimoUso": { "<ruta completa del proyecto>": 1791557244751 },
+    "actualizacion": { "revisado": 1791557244751, "ultima": "1.3.0" } }
   ```
 - `carpetas`: carpetas de proyectos vinculadas. Hasta la 1.2.0 era una sola en `root`; `leerConfig()` la convierte sola. Todos los proyectos se muestran en una sola lista; con más de una carpeta, cada proyecto lleva de hint el nombre de su carpeta (`nombreCarpeta`: la ruta corta si dos carpetas se llaman igual). Una carpeta que ya no existe se avisa una vez y se ignora; no se puede desvincular la última.
 - `color`: tema del menú (`TEMAS` en `lib/ui.js`: cian, verde, azul, magenta, amarillo, sobrio). Usar `color.acento` para títulos y no `color.cian`, así respeta el tema.
 - `orden`: `alfabetico` o `recientes` (usa `ultimoUso`, que se guarda en cada lanzamiento).
 - La última opción del menú de proyectos es `≡ Configuracion…` (el filtro la encuentra con `claves` desde 3 letras: "con", "aju", "opc"). `dev --config` abre el mismo menú; el asistente paso a paso (`configuracionInicial`) solo corre si no hay config. Cada cambio se guarda al instante.
+- `actualizacion`: resultado de la última consulta a npm. `revisarEnSegundoPlano` consulta como máximo una vez al día, sin bloquear (socket con `unref`): el aviso "hay una version nueva" (hint de `≡ Configuracion…` y de la opción `Actualizar dev-launcher`) aparece en la siguiente ejecución. Se desactiva con `DEV_LAUNCHER_NO_UPDATE_CHECK=1` o `NO_UPDATE_NOTIFIER`, y no corre desde una copia del repo (sin `node_modules` en la ruta: ahí la opción dice que se use `git pull`). Al actualizar desde el menú, `dev` corre `npm install -g dev-launcher@latest` y sale, porque el código cargado ya es el viejo. Para probarlo sin tocar la instalación real: instalar el `.tgz` en una carpeta con `--prefix`, bajarle la versión en su `package.json` y correrlo con `npm_config_prefix` apuntando a esa carpeta.
 - `modo`: `preguntar` (por defecto y recomendado: muestra el segundo menú), o fijo `elegir` | `continuar` | `nueva`.
 - `ultimoModo` guarda por proyecto la última opción elegida en el segundo menú y la deja preseleccionada.
 - `ultimoAgente` guarda el agente propio de cada proyecto (se elige con `Cambiar de agente…` en el segundo menú o con `-a`). Solo se guarda si es distinto de `agente`; si se vuelve a elegir el de por defecto, se borra la entrada y el proyecto sigue al de por defecto. Cambiar el agente por defecto (en la configuración) borra las entradas que quedan iguales al nuevo. Por eso el agente se resuelve **después** de elegir el proyecto.
@@ -80,11 +83,11 @@ Si cambia la interfaz, regenerar con `node scripts/demo/gen.js` (o solo algunos:
 2. Actualizaciones: `npm version patch|minor` → `git push --follow-tags` → `npm publish`.
 3. Hacer push a GitHub **no** publica en npm. Instalar con `npm i -g github:diegogit94/dev-launcher` sí toma lo último de `main`.
 
-## Estado y pendientes (al 2026-10-08)
+## Estado y pendientes (al 2026-10-09)
 
 - [x] Primer commit subido a GitHub.
 - [x] Commit con README en inglés, README.es.md, GIFs, `scripts/demo` y este archivo.
-- [x] Primera publicación en npm (manual): `dev-launcher@1.1.0`; luego 1.1.1 (nota de instalación en Windows) y 1.2.0 (agente propio por proyecto).
+- [x] Primera publicación en npm (manual): `dev-launcher@1.1.0`; luego 1.1.1 (nota de instalación en Windows), 1.2.0 (agente propio por proyecto) y 1.3.0 (varias carpetas y menú de configuración).
 - [ ] Workflow `.github/workflows/publish.yml` que publique en npm al crear un release, con **trusted publishing** (OIDC, sin token). Requiere que el paquete ya exista en npm y enlazar el repo y el workflow en la configuración del paquete en npmjs.com.
 - [ ] Opcional: interfaz en inglés y español (detectar idioma del sistema o `--lang`), y luego regenerar los GIFs en inglés.
 - [ ] Probar en Windows y macOS reales (ver "Probar").

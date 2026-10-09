@@ -6,6 +6,7 @@ const { PRESETS, MODOS, todosLosAgentes, resolverModo } = require('../lib/agents
 const cfgLib = require('../lib/config');
 const { color, aplicarTema, menu } = require('../lib/ui');
 const { etiquetaAgente, configuracionInicial, menuConfiguracion } = require('../lib/ajustes');
+const actualizar = require('../lib/actualizar');
 const pkg = require('../package.json');
 
 // Se arma al pedirla para que use el color del tema elegido
@@ -115,7 +116,13 @@ async function elegirProyecto(config, agentes, busqueda) {
     if (id !== config.agente) extra.push(agentes[id].nombre);
     return { label: p.nombre, value: p, hint: extra.length ? '· ' + extra.join('  · ') : undefined };
   });
-  items.push({ label: '≡ Configuracion…', value: CONFIGURACION, claves: ['configuracion', 'ajustes', 'opciones'] });
+  const nueva = actualizar.disponible(config);
+  items.push({
+    label: '≡ Configuracion…',
+    value: CONFIGURACION,
+    hint: nueva ? `· hay una version nueva: ${nueva}` : undefined,
+    claves: ['configuracion', 'ajustes', 'opciones', 'actualizar'],
+  });
   const donde = varias ? `${config.carpetas.length} carpetas` : cfgLib.rutaCorta(config.carpetas[0]);
   return menu({
     titulo: `Elige un proyecto  ${color.gris('(' + donde + ')')}`,
@@ -228,6 +235,8 @@ async function main() {
     console.log(color.acento('Bienvenido a dev. Configuremos tu carpeta de proyectos y tu agente.'));
     config = await configuracionInicial(config);
   }
+
+  if (process.stdin.isTTY) actualizar.revisarEnSegundoPlano(config, guardarSinFallar);
 
   if (opts.lista) {
     const varias = config.carpetas.length > 1;
