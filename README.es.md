@@ -27,6 +27,7 @@
 - **Varias carpetas de proyectos**, todas en una sola lista.
 - **Configuración desde el mismo menú:** carpetas, agente por defecto, color del menú, orden y agentes personalizados.
 - **Escribe para filtrar** listas largas de proyectos, o entra directo con `dev <parte-del-nombre>`.
+- **Un tech-priest en pixel art** te saluda arriba del menú de proyectos (lo puedes ocultar).
 - **Sin dependencias:** un solo paquete pequeño de Node.js.
 
 ## Instalación
@@ -171,6 +172,7 @@ En la configuración elige **Agentes personalizados → Agregar agente…** y es
 | Color del menu | Cian, verde, azul, magenta, amarillo o sobrio (sin color). Cada uno se ve al pasar por encima. |
 | Orden de proyectos | Alfabético, o los últimos que abriste primero. |
 | Idioma | Automático (el de tu sistema), español o inglés. Cambia al instante. |
+| Mascota | Muestra u oculta el tech-priest de arriba del menú de proyectos. También se oculta solo en terminales chicas, sin color o con el tema sobrio. |
 | Agentes personalizados | Agrega, edita o borra tus propios agentes. |
 | Actualizar dev-launcher | Muestra tu versión, consulta npm e instala la nueva si la hay. |
 | Invitame una miniatura de Warhammer | Abre GitHub Sponsors o Ko-fi en el navegador, para dejar una propina (va para la mesa de pintura). |

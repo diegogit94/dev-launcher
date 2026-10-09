@@ -88,7 +88,7 @@ function escenarios(lang) {
       ],
     },
     usage: {
-      cols: 92, rows: 19, config: configDemo(),
+      cols: 92, rows: 28, config: configDemo(),
       steps: [
         Z(0.8), sh('dev'), W(L('proyectos.titulo')), Z(1.0), M('lista'),
         K('DOWN', 0.5), K('DOWN', 0.5), Z(0.3), T('sho', 0.25), Z(1.0),
@@ -105,7 +105,7 @@ function escenarios(lang) {
       ],
     },
     settings: {
-      cols: 92, rows: 19, config: configDemo(),
+      cols: 92, rows: 28, config: configDemo(),
       steps: [
         Z(0.8), sh('dev'), W(L('proyectos.titulo')), Z(1.0),
         K('UP', 0.8), K('ENTER'), W(L('config.propios')), Z(1.6),

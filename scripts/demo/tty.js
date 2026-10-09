@@ -13,6 +13,7 @@ for (const s of [process.stdout, process.stderr]) {
   s.isTTY = true;
   s.columns = Number(process.env.DEMO_COLS) || 92;
   s.rows = Number(process.env.DEMO_ROWS) || 20;
+  s.getColorDepth = () => 24; // color real, como Windows Terminal o iTerm
 }
 
 // stdin: un stream al que gen.js le escribe las teclas. Mientras esta "resumido" (esperando teclas)

@@ -8,6 +8,7 @@ const { color, aplicarTema, menu } = require('../lib/ui');
 const { etiquetaAgente, configuracionInicial, menuConfiguracion } = require('../lib/ajustes');
 const actualizar = require('../lib/actualizar');
 const { t, fijarIdioma, IDIOMAS } = require('../lib/i18n');
+const { mostrarMascota } = require('../lib/mascota');
 const pkg = require('../package.json');
 
 // Se arma al pedirla para que use el idioma y el color del tema elegidos
@@ -69,6 +70,7 @@ function proyectosOrdenados(config) {
 
 const CONFIGURACION = '__config__';
 const avisadas = new Set();
+let mascotaMostrada = false;
 
 // Menu de proyectos. Devuelve { nombre, ruta, carpeta }, CONFIGURACION o null (Esc).
 async function elegirProyecto(config, agentes, busqueda) {
@@ -112,6 +114,9 @@ async function elegirProyecto(config, agentes, busqueda) {
     claves: t('proyectos.claves').split(','),
   });
   const donde = varias ? t('proyectos.carpetas', { n: config.carpetas.length }) : cfgLib.rutaCorta(config.carpetas[0]);
+  // la mascota sale una vez, arriba del primer menu (no al volver con Esc ni desde la configuracion)
+  if (!mascotaMostrada && config.mascota !== false && config.color !== 'sobrio') mostrarMascota(pkg.version);
+  mascotaMostrada = true;
   return menu({
     titulo: `${t('proyectos.titulo')}  ${color.gris('(' + donde + ')')}`,
     items,

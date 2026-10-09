@@ -27,6 +27,7 @@ Tired of `cd`-ing into a folder every time you want to talk to your coding agent
 - **Several project folders**, all shown in one list.
 - **Settings right from the menu:** folders, default agent, menu color, sort order and custom agents.
 - **Type to filter** long project lists, or jump straight in with `dev <part-of-name>`.
+- **A tech-priest mascot** in pixel art greets you above the project menu (you can hide it).
 - **Zero dependencies:** a single small Node.js package.
 
 > **Note:** the interface speaks English and Spanish. It follows your system language; change it in **≡ Settings… → Language**, or just for one run with `--lang es|en`.
@@ -173,6 +174,7 @@ Open the settings with the last option of the project menu, **"≡ Settings…"*
 | Menu color | Cyan, green, blue, magenta, yellow or plain (no color). You see each one as you move over it. |
 | Project order | Alphabetical, or the ones you opened last first. |
 | Language | Automatic (your system's), English or Spanish. It changes right away. |
+| Mascot | Show or hide the tech-priest above the project menu. It also hides itself on small terminals, without color or with the plain theme. |
 | Custom agents | Add, edit or delete your own agents. |
 | Update dev-launcher | Shows your version, checks npm and installs the new one if there is one. |
 | Buy me a Warhammer mini | Opens GitHub Sponsors or Ko-fi in your browser, to leave a tip (it goes to the painting table). |
