@@ -1,6 +1,6 @@
 {
   "name": "dev-launcher",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Abre tus proyectos con tu agente de IA (Claude Code, Codex, Gemini, Copilot, Cursor, OpenCode...) desde un menu en la terminal.",
   "bin": {
     "dev": "bin/dev.js",
