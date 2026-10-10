@@ -171,7 +171,7 @@ Open the settings with the last option of the project menu, **"≡ Settings…"*
 | Project folders | Link more project folders or unlink one (unlinking never deletes anything from disk). With several folders, the menu shows which one each project comes from. |
 | Default agent | The agent for every project that doesn't have its own. |
 | When opening a project | Ask every time (recommended) or always use the same option. |
-| Menu color | Cyan, green, blue, magenta, yellow or plain (no color). You see each one as you move over it. |
+| Menu color | Green (the default), cyan, blue, magenta, yellow, red or plain (no color). You see each one as you move over it. |
 | Project order | Alphabetical, or the ones you opened last first. |
 | Language | Automatic (your system's), English or Spanish. It changes right away. |
 | Mascot | Show or hide the tech-priest above the project menu. It also hides itself on small terminals, without color or with the plain theme. |

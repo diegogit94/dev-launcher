@@ -169,7 +169,7 @@ En la configuración elige **Agentes personalizados → Agregar agente…** y es
 | Carpetas de proyectos | Vincula más carpetas de proyectos o desvincula una (desvincular nunca borra nada del disco). Con varias carpetas, el menú muestra de cuál viene cada proyecto. |
 | Agente por defecto | El agente de todos los proyectos que no tienen uno propio. |
 | Al abrir un proyecto | Preguntar cada vez (recomendado) o usar siempre la misma opción. |
-| Color del menu | Cian, verde, azul, magenta, amarillo o sobrio (sin color). Cada uno se ve al pasar por encima. |
+| Color del menu | Verde (el de por defecto), cian, azul, magenta, amarillo, rojo o sobrio (sin color). Cada uno se ve al pasar por encima. |
 | Orden de proyectos | Alfabético, o los últimos que abriste primero. |
 | Idioma | Automático (el de tu sistema), español o inglés. Cambia al instante. |
 | Mascota | Muestra u oculta el tech-priest de arriba del menú de proyectos. También se oculta solo en terminales chicas, sin color o con el tema sobrio. |
