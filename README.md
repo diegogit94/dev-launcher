@@ -27,7 +27,8 @@ Tired of `cd`-ing into a folder every time you want to talk to your coding agent
 - **Several project folders**, all shown in one list.
 - **Settings right from the menu:** folders, default agent, menu color, sort order and custom agents.
 - **Type to filter** long project lists, or jump straight in with `dev <part-of-name>`.
-- **A tech-priest mascot** in pixel art greets you above the project menu (you can hide it).
+- **Mouse support:** click an option to open it, scroll with the wheel, right click to go back.
+- **A tech-priest mascot** in pixel art greets you in the project menu (move it or hide it).
 - **Zero dependencies:** a single small Node.js package.
 
 > **Note:** the interface speaks English and Spanish. It follows your system language; change it in **≡ Settings… → Language**, or just for one run with `--lang es|en`.
@@ -99,7 +100,7 @@ dev
   </tr>
 </table>
 
-Arrow keys move, Enter opens, Esc goes back. Skip the menus with flags when you already know what you want:
+Arrow keys move, Enter opens, Tab opens the settings, Esc goes back. With the mouse: click an option to open it, use the wheel to move, and right click to go back. Skip the menus with flags when you already know what you want:
 
 | Command | What it does |
 |---|---|
@@ -111,7 +112,7 @@ Arrow keys move, Enter opens, Esc goes back. Skip the menus with flags when you 
 | `dev <project> -a [agent]` | Change that project's agent and remember it (no name shows a menu) |
 | `dev -l`, `--list` | List your projects |
 | `dev --lang es\|en` | Interface language for this run only |
-| `dev --config` | Open the settings (also the last option in the project menu) |
+| `dev --config` | Open the settings (also Tab or **≡ Settings…** in the project menu) |
 | `dev web -- --model opus` | Pass extra arguments to the agent |
 
 <img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/flags.gif" alt="Opening projects directly with flags and another agent" width="760">
@@ -164,7 +165,7 @@ In the settings, choose **Custom agents → Add agent…** and type the commands
 
 ## Configuration
 
-Open the settings with the last option of the project menu, **"≡ Settings…"** (press ↑ from the first project, or type `settings`), or with `dev --config`. Every change is saved right away:
+Open the settings with **Tab** from the project menu, with its **"≡ Settings…"** option (pinned at the bottom, so it stays in view however many projects you have), or with `dev --config`. Every change is saved right away:
 
 | Setting | What it does |
 |---|---|
@@ -174,7 +175,10 @@ Open the settings with the last option of the project menu, **"≡ Settings…"*
 | Menu color | Green (the default), cyan, blue, magenta, yellow, red or plain (no color). You see each one as you move over it. |
 | Project order | Alphabetical, or the ones you opened last first. |
 | Language | Automatic (your system's), English or Spanish. It changes right away. |
-| Mascot | Show or hide the tech-priest above the project menu. It also hides itself on small terminals, without color or with the plain theme. |
+| Settings in the menu | Where **≡ Settings…** goes in the project menu: pinned at the bottom (default), first in the list, or last in the list. Tab opens it either way. |
+| Mouse | Click opens (default), click selects (double click opens), or off. While a menu is open, select text with Shift + drag (Option + drag in iTerm2, Fn + drag in Terminal.app). |
+| Right click | Go back like Esc (default), or do nothing. |
+| Mascot | Where the tech-priest goes: automatic (above the list if it all fits, otherwise on its right), above, on the right, or hidden. If it doesn't fit where you put it, it moves to the other side; it also hides itself on very small terminals, without color or with the plain theme. |
 | Custom agents | Add, edit or delete your own agents. |
 | Update dev-launcher | Shows your version, checks npm and installs the new one if there is one. |
 | Buy me a Warhammer mini | Opens GitHub Sponsors or Ko-fi in your browser, to leave a tip (it goes to the painting table). |

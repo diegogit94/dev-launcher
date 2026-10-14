@@ -27,7 +27,8 @@
 - **Varias carpetas de proyectos**, todas en una sola lista.
 - **Configuración desde el mismo menú:** carpetas, agente por defecto, color del menú, orden y agentes personalizados.
 - **Escribe para filtrar** listas largas de proyectos, o entra directo con `dev <parte-del-nombre>`.
-- **Un tech-priest en pixel art** te saluda arriba del menú de proyectos (lo puedes ocultar).
+- **Con mouse:** clic en una opción para abrirla, la rueda para moverte y clic derecho para volver.
+- **Un tech-priest en pixel art** te saluda en el menú de proyectos (lo puedes mover u ocultar).
 - **Sin dependencias:** un solo paquete pequeño de Node.js.
 
 ## Instalación
@@ -97,7 +98,7 @@ dev
   </tr>
 </table>
 
-Flechas para moverte, Enter para abrir, Esc para volver. Si ya sabes lo que quieres, sáltate los menús con flags:
+Flechas para moverte, Enter para abrir, Tab para la configuración, Esc para volver. Con el mouse: clic en una opción para abrirla, la rueda para moverte y clic derecho para volver. Si ya sabes lo que quieres, sáltate los menús con flags:
 
 | Comando | Qué hace |
 |---|---|
@@ -109,7 +110,7 @@ Flechas para moverte, Enter para abrir, Esc para volver. Si ya sabes lo que quie
 | `dev <proyecto> -a [agente]` | Cambia el agente de ese proyecto y lo recuerda (sin nombre muestra un menú) |
 | `dev -l`, `--lista` | Lista tus proyectos |
 | `dev --lang es\|en` | Idioma de la interfaz solo esa vez |
-| `dev --config` | Abre la configuración (también es la última opción del menú de proyectos) |
+| `dev --config` | Abre la configuración (también con Tab o **≡ Configuracion…** en el menú de proyectos) |
 | `dev web -- --model opus` | Pasa argumentos extra al agente |
 
 <img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/flags-es.gif" alt="Abrir proyectos directo con flags y con otro agente" width="760">
@@ -162,7 +163,7 @@ En la configuración elige **Agentes personalizados → Agregar agente…** y es
 
 ## Configuración
 
-Ábrela con la última opción del menú de proyectos, **"≡ Configuracion…"** (presiona ↑ desde el primer proyecto o escribe `config`), o con `dev --config`. Cada cambio se guarda al instante:
+Ábrela con **Tab** desde el menú de proyectos, con su opción **"≡ Configuracion…"** (fija abajo, así se ve aunque tengas muchos proyectos), o con `dev --config`. Cada cambio se guarda al instante:
 
 | Opción | Qué hace |
 |---|---|
@@ -172,7 +173,10 @@ En la configuración elige **Agentes personalizados → Agregar agente…** y es
 | Color del menu | Verde (el de por defecto), cian, azul, magenta, amarillo, rojo o sobrio (sin color). Cada uno se ve al pasar por encima. |
 | Orden de proyectos | Alfabético, o los últimos que abriste primero. |
 | Idioma | Automático (el de tu sistema), español o inglés. Cambia al instante. |
-| Mascota | Muestra u oculta el tech-priest de arriba del menú de proyectos. También se oculta solo en terminales chicas, sin color o con el tema sobrio. |
+| Configuración en el menú | Dónde va **≡ Configuracion…** en el menú de proyectos: fija abajo (por defecto), primera de la lista o al final. Tab la abre igual. |
+| Mouse | Clic abre (por defecto), clic selecciona (doble clic abre) o desactivado. Con un menú abierto, el texto se selecciona con Shift + arrastrar (Option + arrastrar en iTerm2, Fn + arrastrar en Terminal.app). |
+| Clic derecho | Volver como Esc (por defecto) o no hacer nada. |
+| Mascota | Dónde va el tech-priest: automática (arriba si cabe toda la lista, si no a su derecha), arriba, a la derecha u oculta. Si no cabe donde la pusiste, pasa al otro lado; también se oculta sola en terminales muy chicas, sin color o con el tema sobrio. |
 | Agentes personalizados | Agrega, edita o borra tus propios agentes. |
 | Actualizar dev-launcher | Muestra tu versión, consulta npm e instala la nueva si la hay. |
 | Invitame una miniatura de Warhammer | Abre GitHub Sponsors o Ko-fi en el navegador, para dejar una propina (va para la mesa de pintura). |

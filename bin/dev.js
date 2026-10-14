@@ -4,11 +4,11 @@
 const { spawn } = require('child_process');
 const { PRESETS, MODOS, todosLosAgentes, resolverModo } = require('../lib/agents');
 const cfgLib = require('../lib/config');
-const { color, aplicarTema, menu } = require('../lib/ui');
+const { color, aplicarTema, configurarRaton, menu, soltarTeclado } = require('../lib/ui');
 const { etiquetaAgente, configuracionInicial, menuConfiguracion } = require('../lib/ajustes');
 const actualizar = require('../lib/actualizar');
 const { t, fijarIdioma, IDIOMAS } = require('../lib/i18n');
-const { mostrarMascota } = require('../lib/mascota');
+const { panelMascota } = require('../lib/mascota');
 const pkg = require('../package.json');
 
 // Se arma al pedirla para que use el idioma y el color del tema elegidos
@@ -106,21 +106,29 @@ async function elegirProyecto(config, agentes, busqueda) {
     if (id !== config.agente) extra.push(agentes[id].nombre);
     return { label: p.nombre, value: p, hint: extra.length ? '· ' + extra.join('  · ') : undefined };
   });
+  // "Configuracion": fija al pie de la lista (por defecto), primera o al final. Tab la abre siempre.
   const nueva = actualizar.disponible(config);
-  items.push({
+  const itemConfig = {
     label: t('proyectos.configuracion'),
     value: CONFIGURACION,
     hint: nueva ? t('proyectos.versionNueva', { v: nueva }) : undefined,
     claves: t('proyectos.claves').split(','),
-  });
+  };
+  const enInicio = config.posicionConfig === 'inicio';
+  if (enInicio) items.unshift(itemConfig);
+  else items.push(Object.assign(itemConfig, { fijo: config.posicionConfig !== 'final' }));
   const donde = varias ? t('proyectos.carpetas', { n: config.carpetas.length }) : cfgLib.rutaCorta(config.carpetas[0]);
-  // la mascota sale una vez, arriba del primer menu (no al volver con Esc ni desde la configuracion)
-  if (!mascotaMostrada && config.mascota !== false && config.color !== 'sobrio') mostrarMascota(pkg.version);
+  // la mascota sale una vez, en el primer menu (no al volver con Esc ni desde la configuracion)
+  const panel = !mascotaMostrada && config.mascota !== false && config.color !== 'sobrio' ? panelMascota(pkg.version, config.mascota) : null;
   mascotaMostrada = true;
   return menu({
     titulo: `${t('proyectos.titulo')}  ${color.gris('(' + donde + ')')}`,
     items,
     filtro: busqueda || '',
+    inicial: enInicio && proyectos.length && !busqueda ? 1 : 0,
+    ayuda: t('ayuda.proyectos'),
+    tab: CONFIGURACION,
+    panel,
   });
 }
 
@@ -183,6 +191,7 @@ function citar(arg) {
 }
 
 function ejecutar(comando, cwd) {
+  soltarTeclado(); // el agente recibe la terminal en su modo normal
   const hijo = spawn(comando, { cwd, stdio: 'inherit', shell: true });
   const ignorar = () => {}; // Ctrl+C lo maneja el agente, no dev
   process.on('SIGINT', ignorar);
@@ -204,7 +213,10 @@ function guardarSinFallar(config) {
 async function main() {
   const opts = parsearArgs(process.argv.slice(2));
   let config = cfgLib.leerConfig();
-  if (config) aplicarTema(config.color);
+  if (config) {
+    aplicarTema(config.color);
+    configurarRaton(config.raton, config.clicDerecho);
+  }
   // --lang solo cambia el idioma esta vez; si no, el de la config o el del sistema
   fijarIdioma(IDIOMAS.includes(opts.idioma) ? opts.idioma : config && config.idioma);
   if (opts.idioma !== undefined && !IDIOMAS.includes(opts.idioma)) {
