@@ -11,6 +11,12 @@
 
 English · [Español](README.es.md)
 
+```bash
+npm install -g dev-launcher
+```
+
+**Install it globally (with `-g`)** so the `dev` command works in any folder.
+
 <img src="https://raw.githubusercontent.com/diegogit94/dev-launcher/main/docs/assets/usage.gif" alt="dev-launcher demo: choosing a project and how to open it" width="760">
 
 </div>
